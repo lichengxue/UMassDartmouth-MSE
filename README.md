@@ -7,7 +7,7 @@ A research collaboration between NOAA and UMass Dartmouth.
 This project uses the [whamMSE](https://lichengxue.github.io/whamMSE/) toolbox, which is built upon the [Woods Hole Assessment Model (WHAM)](https://timjmiller.github.io/wham/).
 
 <p align="center">
-  <img width="60%" src="https://github.com/lichengxue/UMassDartmouth-MSE/blob/images/yellowtail_flounder_banner_image_noaa_fisheries.png" />
+  <img width="60%" src="https://github.com/lichengxue/UMassDartmouth-MSE/blob/yellowtail_flounder_banner_image_noaa_fisheries.png" />
   <br>
   Figure 1 - Georges Bank Yellowtail Flounder (<i>Limanda ferruginea</i> - Image credit: NOAA Fisheries)
 </p>
