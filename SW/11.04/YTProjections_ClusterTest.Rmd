@@ -567,7 +567,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$AR1,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -625,7 +625,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$HistAvg,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -684,7 +684,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$RecWind,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -743,7 +743,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$RecTrend,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -803,7 +803,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$TermYear,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -863,7 +863,7 @@ mod <- loop_through_fn(
   sel_em = sel_em,
   NAA_re_em = NAA_re_em,
   ecov_em = scenarios$None,
-  ecov_em_opts = ecov_opts,
+  #ecov_em_opts = ecov_opts,
   age_comp_em = age_comp_em,
   #age_comp_em = "logistic-normal-pool0",
   em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
@@ -901,11 +901,8 @@ stopCluster(cluster)
 
 ```{r sims}
 
-model_nums <- 1:4
-nsim <- c(1:1) # number of simulations/seed
-
-# model_nums <- 1:6
-# nsim <- c(1:10) # number of simulations/seed
+model_nums <- 1:6
+nsim <- c(1:10) # number of simulations/seed
 
 mods <- lapply(nsim, function(r) {
   tryCatch({
