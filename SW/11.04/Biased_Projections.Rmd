@@ -989,7 +989,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_1_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_1_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1053,7 +1053,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_2_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_2_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1117,7 +1117,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_3_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_3_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1181,7 +1181,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_4_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_4_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1245,7 +1245,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_5_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_5_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1309,7 +1309,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.30yr_6_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_1/Mod.50yr_6_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1418,7 +1418,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_1_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_1_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1482,7 +1482,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_2_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_2_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1546,7 +1546,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_3_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_3_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1610,7 +1610,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_4_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_4_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1674,7 +1674,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_5_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_5_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1738,7 +1738,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.30yr_6_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_2/Mod.50yr_6_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1847,7 +1847,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_1_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_1_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1911,7 +1911,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_2_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_2_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -1975,7 +1975,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_3_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_3_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2039,7 +2039,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_4_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_4_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2103,7 +2103,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_5_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_5_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2167,7 +2167,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.30yr_6_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_3/Mod.50yr_6_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2276,7 +2276,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_1_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_1_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2340,7 +2340,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_2_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_2_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2404,7 +2404,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_3_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_3_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2468,7 +2468,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_4_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_4_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2532,7 +2532,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_5_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_5_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2596,7 +2596,7 @@ mod <- loop_through_fn(
   FXSPR_init = 0.5
 )
 
-  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.30yr_6_%03d.RDS"), i)))
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/OM_4/Mod.50yr_6_%03d.RDS"), i)))
   }, error=function(e){})
 }
 
@@ -2627,7 +2627,7 @@ mods <- lapply(nsim, function(r) {
 saveRDS(mods, file = paste0(ModelLocations,"/OM_1/MSEmods_50yr.rds"))
 
 
-#mods <- readRDS("C:/Users/swulfing/Documents/MSE_results/MSEmods_50yr.rds")
+#mods <- readRDS(paste0(ModelLocations,"/OM_1/MSEmods_50yr.rds"))
 
 library(ggridges)
 plot_mse_output(mods,
