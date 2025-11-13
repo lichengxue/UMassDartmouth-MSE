@@ -1,0 +1,309 @@
+---
+title: "Projections_Analysis"
+author: "Sophie Wulfing"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# Where you left off:
+# Splitting the datasets above so for each bias/proj, there's on df for early estimates and another df for parameter estimates. See {r MakeParamDF}. 
+# Then, starting on line 610 from UpdateMSEcode_CHENGEX find params he pulls out and label what they are. Then go through MSE-end2end, adn MSE_30yr_EMFix for stuff to pull out
+# Then go back through manuscript and written list of to dos to make plots
+
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
+wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
+setwd(wd)
+
+library(ggplot2)
+
+PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
+
+# Uncomment this when you run, R just likes to rerun the setup chunk which kills me
+Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/Projections/MSEmods_50yr.rds')
+Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
+Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
+Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
+Mods_bias4 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_4/MSEmods_50yr.rds')
+
+mods_bias <- list(Mods_bias1, Mods_bias2, Mods_bias3, Mods_bias4)
+
+ModNames_proj <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov")
+ModNames_bias <-  c("Mod_AR1Ecov", "Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov", "Mod_NoEcov")
+ModNames_biasOMs <- c("Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov")
+
+```
+
+```{r SpiderPlot_fix}
+source('plotFixTest.R')
+
+
+# PROJECTIONS
+mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
+
+mods <- mods_cleaned
+main_dir <- paste0(PlotLocations, '/Projections')
+main.dir <- main_dir
+output_dir <- "SpiderPlot_fix"
+sub.dir <- output_dir
+output_format <- c("png") # or html or png
+width <- 10 
+height <- 7 
+dpi <- 300
+col.opt <- "D"
+new_model_names <- ModNames_proj
+base.model <- "Mod_AR1Ecov"
+start.years <- 51
+use.n.years.first <- 1
+use.n.years.last <- 3
+is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
+method <- "median"
+
+#whamMSE:::plot_model_performance_radar(mods_cleaned, is.nsim, '.', output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar2(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+# BIASES
+for(i in 1:4){
+mods_cleaned <- mods_bias[[i]][!sapply(mods_bias[[i]], is.null)]
+
+mods <- mods_cleaned
+main_dir <- paste0(PlotLocations, '/Biases/OM_', i)
+main.dir <- main_dir
+output_dir <- "SpiderPlot_fix"
+sub.dir <- output_dir
+output_format <- c("png") # or html or png
+width <- 10 
+height <- 7 
+dpi <- 300
+col.opt <- "D"
+new_model_names <- ModNames_bias
+base.model <- "Mod_AR1Ecov"
+start.years <- 51
+use.n.years.first <- 1
+use.n.years.last <- 3
+is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
+method <- "median"
+
+#whamMSE:::plot_model_performance_radar(mods_cleaned, is.nsim, '.', output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar2(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+
+FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+}
+
+
+```
+
+``` {r MakeYearlyDF}
+
+# NOT PULLING OUT REFERERNCE POINTS. WHYYYYY
+# FBAR IS AGE SPECIFIC, I'M ONLY USING OLDEST
+# DO WE DO TRANSFORMATIONS ON LOG STUFF. NOTED BELOW
+
+# Possible other things to include:
+
+
+# PROJECTIONS
+Proj_ests <- data.frame(Year = c(),
+                      EM_name = c(),
+                      seed_no = c(),
+                      Temp_OM = c(),
+                      Temp_OM_Obs = c(),
+                      Temp_EM = c(),
+                      Temp_EM_Obs = c(),
+                      SSB = c(), # SSB_real
+                      FBar = c(), #f bar OM
+                      Pred_catch = c(), #Predited catch om
+                      Catch_advice = c(),  # catch Advice from EM
+                      #THESE STILL AREN'T RUNNING. WHY
+                      # log_FMSY_stat = c(), #IN LOG SPACE. TRANSFORM
+                      # log_SSB_FXSPR_stat = c(), #IN LOG SPACE. TRANSFORM
+                      # log_FBar_SXPR_stat = c() #IN LOG SPACE. TRANSFORM
+                      recPars_a = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1
+                      recPars_b = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1
+                      Ecov_processPars_mean = c(),#IN LOG SPACE. TRANSFORM ? # mean ecov param
+                      Ecov_processPars_sd = c(),#IN LOG SPACE. TRANSFORM ? # sd ecov param
+                      Ecov_processPars_logit_rho = c()) #logitrho for ecov param
+
+mods <- Mods_proj
+for(i in 1:length(Mods_proj)){ # i = seed, j = model
+  for(k in 1:length(ModNames_proj)){
+    tryCatch({
+      
+      years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 5) #Year
+    em_name <- rep(ModNames_proj[k], length(years)) # Model Name
+    Seed <- rep(i, length(years))
+      # Ecov_x estimates
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]] # em obs temps
+    # Ecov_Obs estimates
+    SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]] #Fbar
+    pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
+    cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
+    # FMSY <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_FMSY_static"]]
+    # SSB_FXSPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_SSB_FXSPR_static"]]
+    # FBar_SXPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_Fbar_XSPR_static"]]
+    recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,1], length(years))
+    recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,2], length(years))
+    ecov_processpar_mean <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[1,], length(years))
+    ecov_processpar_sd <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[2,], length(years))
+    ecov_processpar_logit_rho <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[3,], length(years))
+    
+    data_List <- data.frame(Year = years,
+                      EM_name = em_name,
+                      seed_no = Seed,
+                      Temp_OM = om_ecovx[1:100,],
+                      Temp_OM_Obs = om_ecovObs[1:100,],
+                      Temp_EM = em_ecovx[1:100,],
+                      Temp_EM_Obs = em_ecovObs[1:100,],
+                      SSB = SSB_om,
+                      FBar = FBar_om[,1], #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
+                      Pred_catch = pred_catch_om,
+                      Catch_advice = cat_advice_em,
+                      # log_FMSY_stat = FMSY,
+                      # log_SSB_FXSPR_stat = SSB_FXSPR,
+                      # log_FBar_SXPR_stat = FBar_SXPR
+                      recPars_a = recpar_a, #IN LOG SPACE. TRANSFORM?
+                      recPars_b = recpar_b, #IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_mean = ecov_processpar_mean,#IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_sd = ecov_processpar_sd,#IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_logit_rho = ecov_processpar_logit_rho)
+    
+    Proj_ests <- rbind(Proj_ests, data_List)
+    
+      
+    }, error=function(e){})      
+  }
+}
+saveRDS(Proj_ests,'C:/Users/swulfing/Documents/MSE_results/Projections/Projections_data.rds')
+
+# BIASES
+Bias_ests <- list(OM_1 = NULL,
+                  OM_2 = NULL,
+                  OM_3 = NULL,
+                  OM_4 = NULL)
+for(j in 1:length(ModNames_biasOMs)){
+
+ests <- data.frame(Year = c(),
+                      OM_Name = c(),
+                      EM_name = c(),
+                      seed_no = c(),
+                      Temp_OM = c(),
+                      Temp_OM_Obs = c(),
+                      Temp_EM = c(),
+                      Temp_EM_Obs = c(),
+                      SSB = c(),
+                      FBar = c(),
+                      Pred_catch = c(),
+                      Catch_advice = c(), #THESE STILL AREN'T RUNNING. WHY
+                      # log_FMSY_stat = c(),
+                      # log_SSB_FXSPR_stat = c(),
+                      # log_FBar_SXPR_stat = c()
+                      recPars_a = c(), #IN LOG SPACE. TRANSFORM ?
+                      recPars_b = c(), #IN LOG SPACE. TRANSFORM ?
+                      Ecov_processPars_mean = c(),#IN LOG SPACE. TRANSFORM ?
+                      Ecov_processPars_sd = c(),#IN LOG SPACE. TRANSFORM ?
+                      Ecov_processPars_logit_rho = c())
+
+mods <- mods_bias[[j]]
+for(i in 1:length(mods_bias[[j]])){ # i = seed, j = model
+  for(k in 1:length(ModNames_bias)){
+    tryCatch({
+      
+      years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 5) #Year
+    om_name <- rep(ModNames_biasOMs[[j]], length(years))
+    em_name <- rep(ModNames_bias[k], length(years)) # Model Name
+    Seed <- rep(i, length(years))
+      # Ecov_x estimates
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]] # em obs temps
+    # Ecov_Obs estimates
+    SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]] #Fbar
+    pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
+    cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
+    # FMSY <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_FMSY_static"]]
+    # SSB_FXSPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_SSB_FXSPR_static"]]
+    # FBar_SXPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_Fbar_XSPR_static"]]
+    recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,1], length(years))
+    recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,2], length(years))
+    ecov_processpar_mean <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[1,], length(years))
+    ecov_processpar_sd <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[2,], length(years))
+    ecov_processpar_logit_rho <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[3,], length(years))
+    
+    data_List <- data.frame(Year = years,
+                      OM_Name = om_name,
+                      EM_name = em_name,
+                      seed_no = Seed,
+                      Temp_OM = om_ecovx[1:100,],
+                      Temp_OM_Obs = om_ecovObs[1:100,],
+                      Temp_EM = em_ecovx[1:100,],
+                      Temp_EM_Obs = em_ecovObs[1:100,],
+                      SSB = SSB_om,
+                      FBar = FBar_om[,1], #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
+                      Pred_catch = pred_catch_om,
+                      Catch_advice = cat_advice_em,
+                      # log_FMSY_stat = FMSY,
+                      # log_SSB_FXSPR_stat = SSB_FXSPR,
+                      # log_FBar_SXPR_stat = FBar_SXPR)
+                      recPars_a = recpar_a, #IN LOG SPACE. TRANSFORM?
+                      recPars_b = recpar_b, #IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_mean = ecov_processpar_mean,#IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_sd = ecov_processpar_sd,#IN LOG SPACE. TRANSFORM?
+                      Ecov_processPars_logit_rho = ecov_processpar_logit_rho)
+    
+    ests <- rbind(ests, data_List)
+    
+      
+    }, error=function(e){})      
+  }
+}
+Bias_ests[[j]] <- ests
+}
+
+saveRDS(Bias_ests,'C:/Users/swulfing/Documents/MSE_results/Biases/Biases_data.rds')
+```
+
+```{r MakeParamDF}
+
+```
+
+```{r convergenceList}
+
+# LIST CONVERGENCE OF EACH LIST. POTENTIALLY MOVE THIS TO BEFORE SPIDER PLOTS AND DFS
+# 
+# convergence list. Fit EM twixe because two assessments in feedback period. WANT BOTH TO BE 2 OTHERWISE DISCARD ENTIRE SEED. MAKE SURE EVERY REALIZATION CONTAINS ALL EMS THAT CONVERGED. IF YOU USE AN UNCONVERGED MODEL IS NOT POSSIBLE
+```
+
+```{r paramEsts}
+# MAKE A TABLE OF THE PARAMETER ESTIMATES
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

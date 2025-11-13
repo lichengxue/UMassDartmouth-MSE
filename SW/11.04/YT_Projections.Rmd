@@ -901,8 +901,8 @@ stopCluster(cluster)
 
 ```{r sims}
 
-model_nums <- 1:4
-nsim <- c(1:1) # number of simulations/seed
+model_nums <- 1:6
+nsim <- c(1:10) # number of simulations/seed
 
 # model_nums <- 1:6
 # nsim <- c(1:10) # number of simulations/seed
