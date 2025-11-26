@@ -1,17 +1,17 @@
 ---
-title: "YT_Projections"
+title: "BiasProjection_combine"
 author: "Sophie Wulfing"
-date: "2025-11-04"
+date: "2025-11-24"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-# knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
-# wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
-# setwd(wd)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
+wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
+setwd(wd)
 
-PlotLocations <- 'MSEResults'
-ModelLocations <- 'MSEResults'
+PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots/Combo'
+ModelLocations <- 'C:/Users/swulfing/Documents/MSE_results/Combo'
 
 # devtools::install_github(
 #   "lichengxue/whamMSE",
@@ -207,33 +207,24 @@ NAA_re <- list(
 
 ```
 
-```{r OM_ecov}
-## RECONFIG DIMS HERE IF CHANGING MSE PERIOD
+```{r om_ecov}
 
-## ============================================================
-## 7) Environmental covariate (Ecov) series construction
-##    - years 1972–2028 (= 57 rows) with a 1-year lag
-##    - we will build a PROJECTED trend scenario for 2023–2028
-## ============================================================
-
-## 7.2 PROJECTED trend for 2023–2028 by linear regression over historical (1972+)
+## MED PROJECTION
 lm_fit <- lm(bt_temp ~ Year, data = env.dat_me)
 lm_sum <- summary(lm_fit)
 proj_df <- data.frame(year_proj = 2022:2072)                    # we only need 2023–2028, but harmless to compute 2022 too
-error_sd <- lm_sum[["sigma"]]                                   # residual SD
+error_sd <- lm_sum[["sigma"]] # residual SD
 set.seed(42)
 proj_df$SD <- rnorm(nrow(proj_df), 0, error_sd)
 proj_df$Temp_proj <- lm_sum$coefficients[1,1] +
   lm_sum$coefficients[2,1]*proj_df$year_proj +
   proj_df$SD
 
-## 7.3 Fill PROJECTED mean into 2023–2028 (rows 52:57 if year starts at 1972)
+# 7.3 Fill PROJECTED mean into 2023–2028 (rows 52:57 if year starts at 1972)
 ecov_om_P <- ecov_om
 ecov_om_P$mean[51:101, 1] <- proj_df$Temp_proj[proj_df$year_proj >= 2022]  # 51->2022, 52->2023, ..., 57->2028
 
-## Optional CONSTANT future scenario (commented out)
-# ecov_om_C <- ecov_om
-# ecov_om_C$mean[51:57, 1] <- mean(env.dat_me$bt_temp, na.rm = TRUE)
+plot(x = ecov_om_P$year, y = ecov_om_P$mean)
 
 ```
 
@@ -395,23 +386,6 @@ ecov_me <- list(
   recruitment_how = matrix("controlling-lag-1-linear")
 )
 
-# ###### CHENG CODE #####
-# ## 12.1 AR1 scenario for EM: identical to template (EM assumes AR1)
-# ecov_AR1 <- ecov_me
-# 
-# ## 12.2 Historical Average scenario for EM: replace future mean with hist avg
-# hist_avg_val <- mean(ecov_me$mean[(1+lag):(n_hist+lag), 1], na.rm = TRUE)  # average over 1973–2022
-# ecov_HistAvg <- ecov_me
-# ecov_HistAvg$mean[(n_hist+lag+1):n_total, 1] <- hist_avg_val               # 2023–2028 rows
-# 
-# ## Keep both in a named list
-# scenarios <- list(AR1 = ecov_AR1, HistAvg = ecov_HistAvg)
-# 
-# ## Quick size checks
-# # range(scenarios$AR1$year)   # 1972..2028
-# # length(scenarios$AR1$year)  # 57
-# ###### CHENG CODE #####
-
 ecov_AR1 <- ecov_me ###NOT DOING THIS ONE YET. NEED TO FIGURE OUT PROBLEM WITH EMS
 ecov_none <- ecov_me
 ecov_none$recruitment_how = matrix("none", input$data$n_Ecov, input$data$n_stocks)
@@ -448,6 +422,17 @@ ecov_RecTrend$mean[51:101,] <- RecTrend$Temp[1:51]
 ecov_TermYear <- ecov_me
 ecov_TermYear$mean[51:101,] <- ecov_om_P$mean[50,]
 
+
+ecov_BadProj <- ecov_me
+ecov_BadProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+  (-lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021)) +
+  proj_df$SD
+
+ecov_GoodProj <- ecov_me
+ecov_GoodProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+  lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021) +
+  proj_df$SD
+
     # Return scenarios
 scenarios <- list(
       AR1 = ecov_AR1,
@@ -455,7 +440,9 @@ scenarios <- list(
       HistAvg = ecov_HistAvg,
       RecWind = ecov_RecWind,
       RecTrend = ecov_RecTrend,
-      TermYear = ecov_TermYear
+      TermYear = ecov_TermYear,
+      BadProj = ecov_BadProj,
+      GoodProj = ecov_GoodProj
     )
 
 ####################### PLOTTING ###############################################
@@ -476,15 +463,19 @@ EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
   geom_line( aes(x = scenarios[["RecWind"]][["year"]], y = scenarios[["RecWind"]][["mean"]], color = 'RecWind')) +
   geom_line( aes(x = scenarios[["RecTrend"]][["year"]], y = scenarios[["RecTrend"]][["mean"]], color = 'RecTrend')) +
   geom_line( aes(x = scenarios[["TermYear"]][["year"]], y = scenarios[["TermYear"]][["mean"]], color = 'TermYear')) +
+  geom_line( aes(x = scenarios[["GoodProj"]][["year"]], y = scenarios[["GoodProj"]][["mean"]], color = 'GoodProj')) +
+  geom_line( aes(x = scenarios[["BadProj"]][["year"]], y = scenarios[["BadProj"]][["mean"]], color = 'BadProj')) +
   geom_line(aes(color = "OM")) +
   scale_color_manual(name='Model',
-                     breaks=c('OM', 'AR1', 'RecWind', 'HistAvg', 'RecTrend', 'TermYear'),
+                     breaks=c('OM', 'AR1', 'RecWind', 'HistAvg', 'RecTrend', 'TermYear', 'GoodProj', 'BadProj'),
                      values=c('OM'="#000000", 
                               'AR1'="#CD0BBC",
                               'RecWind' = "#F5C710" ,
                               'HistAvg' =  "#3283FE",
                               'RecTrend' = "#00BA38",
-                              'TermYear' = "red")) +
+                              'TermYear' = "red",
+                              'GoodProj' = 'purple',
+                              'BadProj' = 'orange')) +
   ylab("Bottom Temperature (°C)") +
   xlab("Year")
   #xlim(2019,2052)
@@ -899,10 +890,129 @@ stopCluster(cluster)
 
 ```
 
+```{r EcovGoodProjSims}
+
+library(doParallel)
+library(foreach)
+
+cluster <- makeCluster(10)
+registerDoParallel(cluster)
+
+foreach (i = c(1:10)) %dopar% {
+#for(i in 1:10){
+  #tryCatch({
+library(whamMSE) 
+library(wham)
+
+mod <- loop_through_fn(
+  om = om_with_data_P,
+  em_info = info,
+  random = random_P,
+  M_em = M_em,
+  sel_em = sel_em,
+  NAA_re_em = NAA_re_em,
+  ecov_em = scenarios$GoodProj,
+  ecov_em_opts = ecov_opts,
+  age_comp_em = age_comp_em,
+  #age_comp_em = "logistic-normal-pool0",
+  em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
+  # update_index_info = list(
+  #   agg_index_sigma = input_P$data$agg_index_sigma,
+  #   index_Neff = input_P$data$index_Neff,
+  #   remove_agg = TRUE, remove_agg_pointer = 1:3, remove_agg_years = remove_agg_years1,
+  #   remove_paa = TRUE, remove_paa_pointer = 1:3, remove_paa_years = remove_paa_years1
+  # ),
+  # update_catch_info = list(
+  #   agg_catch_sigma = input_P$data$agg_catch_sigma,
+  #   catch_Neff = input_P$data$catch_Neff
+  # ),
+  update_index_info = update_index_info_list,
+  update_catch_info = update_catch_info_list,
+  assess_years = assess.years,
+  assess_interval = assess.interval,
+  base_years = base.years,
+  year.use = 50,
+  add.years = TRUE,
+  seed = 123 + i,
+  hcr = hcr,
+  save.sdrep = FALSE,
+  save.last.em = TRUE,
+  FXSPR_init = 0.5
+)
+
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/Mod.50yr_7_%03d.RDS"), i)))
+ # }, error=function(e){})
+}
+
+stopCluster(cluster)
+
+```
+
+```{r EcovBadProjSims}
+
+library(doParallel)
+library(foreach)
+
+cluster <- makeCluster(10)
+registerDoParallel(cluster)
+
+foreach (i = c(1:10)) %dopar% {
+#for(i in 1:10){
+  #tryCatch({
+library(whamMSE) 
+library(wham)
+
+mod <- loop_through_fn(
+  om = om_with_data_P,
+  em_info = info,
+  random = random_P,
+  M_em = M_em,
+  sel_em = sel_em,
+  NAA_re_em = NAA_re_em,
+  ecov_em = scenarios$BadProj,
+  ecov_em_opts = ecov_opts,
+  age_comp_em = age_comp_em,
+  #age_comp_em = "logistic-normal-pool0",
+  em.opt = list(separate.em = FALSE, separate.em.type = 1, do.move = FALSE, est.move = FALSE),
+  # update_index_info = list(
+  #   agg_index_sigma = input_P$data$agg_index_sigma,
+  #   index_Neff = input_P$data$index_Neff,
+  #   remove_agg = TRUE, remove_agg_pointer = 1:3, remove_agg_years = remove_agg_years1,
+  #   remove_paa = TRUE, remove_paa_pointer = 1:3, remove_paa_years = remove_paa_years1
+  # ),
+  # update_catch_info = list(
+  #   agg_catch_sigma = input_P$data$agg_catch_sigma,
+  #   catch_Neff = input_P$data$catch_Neff
+  # ),
+  update_index_info = update_index_info_list,
+  update_catch_info = update_catch_info_list,
+  assess_years = assess.years,
+  assess_interval = assess.interval,
+  base_years = base.years,
+  year.use = 50,
+  add.years = TRUE,
+  seed = 123 + i,
+  hcr = hcr,
+  save.sdrep = FALSE,
+  save.last.em = TRUE,
+  FXSPR_init = 0.5
+)
+
+  saveRDS(mod, file.path(sprintf(paste0(ModelLocations,"/Mod.50yr_8_%03d.RDS"), i)))
+ # }, error=function(e){})
+}
+
+stopCluster(cluster)
+
+```
+
 ```{r sims}
 
-model_nums <- 1:6
+model_nums <- 1:8
 nsim <- c(1:10) # number of simulations/seed
+
+# model_nums <- 1:6
+# nsim <- c(1:10) # number of simulations/seed
 
 mods <- lapply(nsim, function(r) {
   tryCatch({
@@ -930,13 +1040,23 @@ plot_mse_output(mods,
                 output_format = c("png"), # or html or png
                 width = 10, height = 7, dpi = 300,
                 col.opt = "D",
-                new_model_names = c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov"),
+                new_model_names = c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj"),
                 base.model = "Mod_AR1Ecov",
                 start.years = 51,
                 use.n.years.first = 1,
                 use.n.years.last = 3)
 
 ```
+
+
+
+
+
+
+
+
+
+
 
 
 

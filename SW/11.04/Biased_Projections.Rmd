@@ -260,11 +260,23 @@ ecov_om_3$mean[51:101, 1] <- proj_MED$Temp_proj[proj_df$year_proj >= 2022]  # 51
 ecov_om_4 <- ecov_om
 ecov_om_4$mean[51:101, 1] <- proj_HIGH$Temp_proj[proj_df$year_proj >= 2022]  # 51->2022, 52->2023, ..., 57->202
 
-plot(x = ecov_om_4[["year"]], y = ecov_om_4[["mean"]])
+plotData <- data.frame(year = ecov_om$year,
+                       OM_1 = ecov_om_1$mean,
+                       OM_2 = ecov_om_2$mean,
+                       OM_3 = ecov_om_3$mean,
+                       OM_4 = ecov_om_4$mean
+                       )
 
-## Optional CONSTANT future scenario (commented out)
-# ecov_om_C <- ecov_om
-# ecov_om_C$mean[51:57, 1] <- mean(env.dat_me$bt_temp, na.rm = TRUE)
+ggplot(plotData, aes(x = year, y = OM_1)) +
+  #geom_point(aes(x = year, y = OM_1, color = 'blue')) +
+  geom_line(aes(x = year, y = OM_1, color = 'blue')) +
+  #geom_point(aes(x = year, y = OM_2, color = 'green')) +
+  geom_line(aes(x = year, y = OM_2, color = 'green')) +
+  #geom_point(aes(x = year, y = OM_3, color = 'black')) +
+  geom_line(aes(x = year, y = OM_3, color = 'black')) +
+  #geom_point(aes(x = year, y = OM_4, color = 'red')) +
+  geom_line(aes(x = year, y = OM_4, color = 'red')) +
+  xlim(2022,2072)
 
 ```
 
