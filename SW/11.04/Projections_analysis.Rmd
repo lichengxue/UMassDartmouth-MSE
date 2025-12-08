@@ -27,7 +27,7 @@ library(secr)
 
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
-# # Uncomment this when you run, R just likes to rerun the setup chunk which kills me
+# Uncomment this when you run, R just likes to rerun the setup chunk which kills me
 # Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
 # Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
 # Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
@@ -53,14 +53,14 @@ seeds <- 10
 # 
 # convergence list. Fit EM twixe because two assessments in feedback period. WANT BOTH TO BE 2 OTHERWISE DISCARD ENTIRE SEED. MAKE SURE EVERY REALIZATION CONTAINS ALL EMS THAT CONVERGED. IF YOU USE AN UNCONVERGED MODEL IS NOT POSSIBLE
 
-# 
+
 # for (i in 1:length(Mods_proj)){
 #   for(j in 1:length(Mods_proj[[i]])){
 #     if(is.null(Mods_proj[[i]][[j]])){
 #       Mods_proj[[i]] <- NA
 #     }
 #   }
-#     
+# 
 # }
 # 
 # 
@@ -89,8 +89,8 @@ main.dir <- main_dir
 output_dir <- "SpiderPlot_fix"
 sub.dir <- output_dir
 output_format <- c("png") # or html or png
-width <- 10 
-height <- 7 
+width <- 10
+height <- 7
 dpi <- 300
 col.opt <- "D"
 new_model_names <- ModNames_proj
@@ -108,37 +108,37 @@ FIXEDplot_model_performance_radar(mods_cleaned, is.nsim, main_dir, output_dir, w
 FIXEDplot_model_performance_radar2(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
 
 FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
-
-# BIASES
-for(i in 1:4){
-mods_cleaned <- mods_bias[[i]][!sapply(mods_bias[[i]], is.null)]
-
-mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/Biases/OM_', i)
-main.dir <- main_dir
-output_dir <- "SpiderPlot_fix"
-sub.dir <- output_dir
-output_format <- c("png") # or html or png
-width <- 10 
-height <- 7 
-dpi <- 300
-col.opt <- "D"
-new_model_names <- ModNames_bias
-base.model <- "Mod_AR1Ecov"
-start.years <- 51
-use.n.years.first <- 1
-use.n.years.last <- 3
-is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
-method <- "median"
-
-#whamMSE:::plot_model_performance_radar(mods_cleaned, is.nsim, '.', output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
-
-FIXEDplot_model_performance_radar(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
-
-FIXEDplot_model_performance_radar2(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
-
-FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
-}
+# 
+# # BIASES
+# for(i in 1:4){
+# mods_cleaned <- mods_bias[[i]][!sapply(mods_bias[[i]], is.null)]
+# 
+# mods <- mods_cleaned
+# main_dir <- paste0(PlotLocations, '/Biases/OM_', i)
+# main.dir <- main_dir
+# output_dir <- "SpiderPlot_fix"
+# sub.dir <- output_dir
+# output_format <- c("png") # or html or png
+# width <- 10 
+# height <- 7 
+# dpi <- 300
+# col.opt <- "D"
+# new_model_names <- ModNames_bias
+# base.model <- "Mod_AR1Ecov"
+# start.years <- 51
+# use.n.years.first <- 1
+# use.n.years.last <- 3
+# is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
+# method <- "median"
+# 
+# #whamMSE:::plot_model_performance_radar(mods_cleaned, is.nsim, '.', output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+# 
+# FIXEDplot_model_performance_radar(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+# 
+# FIXEDplot_model_performance_radar2(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+# 
+# FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, width, height, dpi, col.opt, method, use.n.years.first, use.n.years.last, start.years, new_model_names)
+# }
 
 
 ```
@@ -172,18 +172,21 @@ Proj_ests <- data.frame(Year = c(),
                       # log_FBar_SXPR_stat = c() #IN LOG SPACE. TRANSFORM
                       recPars_a = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1 # Intercept
                       recPars_b = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1
-                      Ecov_processPars_mean_overall = c(),#IN LOG SPACE. TRANSFORM ? # mean ecov param
-                      Ecov_processPars_sd_overall = c(),#IN LOG SPACE. TRANSFORM ? # sd ecov param
-                      Ecov_processPars_rho_overall = c(), #logitrho for ecov param
-                      Ecov_processPars_mean_assessment = c(),
-                      Ecov_processPars_sd_assessment = c(),
-                      Ecov_processPars_rho_assessment = c(),
+                      Ecov_beta_R_OM= c(), #logitrho for ecov param
+                      Ecov_beta_R_EM = c(),
                       OM_RecPar_A = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       OM_RecPar_B = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       EM_q = c(),
                       OM_q = c(),
                       OM_NAA_oldest = c(),
-                      EM_PredNAA_oldest = c()
+                      OM_NAA_youngest = c(),
+                      EM_NAA_oldest = c(),
+                      EM_NAA_youngest = c(),
+                      
+                      OM_NAAsigma_oldest = c(),
+                      OM_NAAsigma_youngest = c(),
+                      EM_NAAsigma_oldest = c(),
+                      EM_NAAsigma_youngest = c()
                       )
 
 mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
@@ -203,70 +206,69 @@ for(i in 1:length(mods)){ # i = seed, j = model
     em_name <- rep(ModNames_proj[k], length(years)) # Model Name
     Seed <- rep(i, length(years))
       # Ecov_x estimates
-    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]] #OM_ecov Temps
-    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]] # om obs temps
-    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]] #EM_ecov Temps
-    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:100,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:100,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:100,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:100,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
     # Ecov_Obs estimates
     
     SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
-    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]] #Fbar
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1] #Fbar
     pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
     cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
-    # FMSY <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_FMSY_static"]]
-    # SSB_FXSPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_SSB_FXSPR_static"]]
-    # FBar_SXPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_Fbar_XSPR_static"]]
     
-    # recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,1], length(years)) # REPORTED PER ASSESSMENT
-    # recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,2], length(years))# REPORTED PER ASSESSMENT
-    # 
-    # ecov_processpar_mean <- rep(exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[1,]), length(years))# REPORTED PER ASSESSMENT
-    # ecov_processpar_sd <- rep(exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[2,]), length(years))# REPORTED PER ASSESSMENT
-    # ecov_processpar_rho <- rep(invlogit(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[3,]), length(years))# REPORTED PER ASSESSMENT
-    ecov_processpar_mean_overall <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][1,], length(years))
-    ecov_processpar_sd_overall <- rep(exp(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][2,]), length(years))
-    ecov_processpar_rho_overall <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][3,], length(years))
+    Ecov_beta_R_OM <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["par"]][["Ecov_beta_R"]], length(years))
     
-    # THESE ARE THE OVERALL ESTS: Mods_proj[[1]][["Mod1"]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]]
     om_recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
     om_recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
     
-    em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]], length(years))
-    om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']], length(years))
+    em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]][1], length(years))
+    om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']][1], length(years))
+    
     om_naa_oldest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,6]
-    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["pred_NAA"]][,,,6], rep(NA,5))
+    om_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,6], length(years))
+    
+    om_naa_youngest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1]
+    om_naasigma_youngest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,1], length(years))
+    
+    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 5))
+    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 5))
+    # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
+    # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
     
     
     # RECORDING INFO THAT IS REPORTED PER ASSESSMENT YEAR
         df_perAssessment <- data.frame(years_trace = years,
                                    recPars_a = NA,
                                    recPars_b = NA,
-                                   Ecov_processPars_mean_assessment = NA,#IN LOG SPACE. TRANSFORM ? # mean ecov param
-                                   Ecov_processPars_sd_assessment = NA,#IN LOG SPACE. TRANSFORM ? # sd ecov param
-                                   Ecov_processPars_rho_assessment = NA)
+                                   Ecov_beta_R_EM = NA,
+                                   em_naasigma_oldest = NA, 
+                                   em_naasigma_youngest = NA)
     for(q in 1:length(years)){
       if(years[q] %in% assess.years){
-        
+
         assess.no <- which(assess.years == years[q])
-        
+
         df_perAssessment$recPars_a[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,1] # REPORTED PER ASSESSMENT
         df_perAssessment$recPars_b[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,2] # REPORTED PER ASSESSMENT
+
+        df_perAssessment$Ecov_beta_R_EM[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["Ecov_beta_R"]]
         
-        df_perAssessment$Ecov_processPars_mean_assessment[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[1,]
-        df_perAssessment$Ecov_processPars_sd_assessment[q:(q+2)] <- exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[2,])
-        df_perAssessment$Ecov_processPars_rho_assessment[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[3,]
-        
-      }
+        df_perAssessment$em_naasigma_oldest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,6]
+        df_perAssessment$em_naasigma_youngest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,1]
+
+
+      }}
     
     data_List <- data.frame(Year = years,
                       EM_name = em_name,
                       seed_no = Seed,
-                      Temp_OM = om_ecovx[1:100,],
-                      Temp_OM_Obs = om_ecovObs[1:100,],
-                      Temp_EM = em_ecovx[1:100,],
-                      Temp_EM_Obs = em_ecovObs[1:100,],
+                      Temp_OM = om_ecovx,
+                      Temp_OM_Obs = om_ecovObs,
+                      Temp_EM = em_ecovx,
+                      Temp_EM_Obs = em_ecovObs,
                       SSB = SSB_om,
-                      FBar = FBar_om[,1], #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
+                      FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
                       Catch_advice = cat_advice_em,
                       # log_FMSY_stat = FMSY,
@@ -274,25 +276,28 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       # log_FBar_SXPR_stat = FBar_SXPR
                       EM_recPars_a = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
                       EM_recPars_b = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
-                      Ecov_processPars_mean_overall = ecov_processpar_mean_overall,#IN LOG SPACE. TRANSFORM?
-                      Ecov_processPars_sd_overall = ecov_processpar_sd_overall,#IN LOG SPACE. TRANSFORM?
-                      Ecov_processPars_rho_overall = ecov_processpar_rho_overall,
-                      Ecov_processPars_mean_assessment = df_perAssessment$Ecov_processPars_mean_assessment,
-                      Ecov_processPars_sd_assessment = df_perAssessment$Ecov_processPars_sd_assessment,
-                      Ecov_processPars_rho_assessment = df_perAssessment$Ecov_processPars_rho_assessment,
+                      Ecov_beta_R_OM = Ecov_beta_R_OM,#IN LOG SPACE. TRANSFORM?
+                      Ecov_beta_R_EM = df_perAssessment$Ecov_beta_R_EM,
                       OM_RecPar_A = om_recpar_a,#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       OM_RecPar_B = om_recpar_b,
                       EM_q = em_q,
                       OM_q = om_q,
                       OM_NAA_oldest = om_naa_oldest,
-                      EM_PredNAA_oldest = em_naa_oldest
+                      OM_NAA_youngest = om_naa_youngest,
+                      EM_NAA_oldest = em_naa_oldest,
+                      EM_NAA_youngest = em_naa_youngest,
+                      
+                      OM_NAAsigma_oldest = om_naasigma_oldest,
+                      OM_NAAsigma_youngest = om_naasigma_youngest,
+                      EM_NAAsigma_oldest = df_perAssessment$em_naasigma_oldest,
+                      EM_NAAsigma_youngest = df_perAssessment$em_naasigma_youngest
                       )
     
     Proj_ests <- rbind(Proj_ests, data_List)
     
       
   }
-}}
+  }
 
 # Proj_ests$Ecov_processPars_mean_assessment <- NA
 # Proj_ests$Ecov_processPars_sd_assessment <- NA
@@ -335,18 +340,21 @@ ests <- data.frame(Year = c(),
                       # log_FBar_SXPR_stat = c() #IN LOG SPACE. TRANSFORM
                       recPars_a = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1 # Intercept
                       recPars_b = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1
-                      Ecov_processPars_mean_overall = c(),#IN LOG SPACE. TRANSFORM ? # mean ecov param
-                      Ecov_processPars_sd_overall = c(),#IN LOG SPACE. TRANSFORM ? # sd ecov param
-                      Ecov_processPars_rho_overall = c(), #logitrho for ecov param
-                      Ecov_processPars_mean_assessment = c(),
-                      Ecov_processPars_sd_assessment = c(),
-                      Ecov_processPars_rho_assessment = c(),
+                      Ecov_beta_R_OM= c(), #logitrho for ecov param
+                      Ecov_beta_R_EM = c(),
                       OM_RecPar_A = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       OM_RecPar_B = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       EM_q = c(),
                       OM_q = c(),
                       OM_NAA_oldest = c(),
-                      EM_PredNAA_oldest = c()
+                      OM_NAA_youngest = c(),
+                      EM_NAA_oldest = c(),
+                      EM_NAA_youngest = c(),
+                      
+                      OM_NAAsigma_oldest = c(),
+                      OM_NAAsigma_youngest = c(),
+                      EM_NAAsigma_oldest = c(),
+                      EM_NAAsigma_youngest = c()
                    )
 
 mods <- readRDS(paste0('C:/Users/swulfing/Documents/MSE_results/Biases/OM_', j ,'/MSEmods_50yr.rds'))
@@ -367,73 +375,71 @@ for(i in 1:length(mods)){ # i = seed, j = model
   for(k in 1:length(ModNames_bias)){
       
     years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 5) #Year
-    em_name <- rep(ModNames_proj[k], length(years)) # Model Name
+    em_name <- rep(ModNames_bias[k], length(years)) # Model Name
     Seed <- rep(i, length(years))
       # Ecov_x estimates
-    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]] #OM_ecov Temps
-    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]] # om obs temps
-    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]] #EM_ecov Temps
-    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:100,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:100,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:100,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:100,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
     # Ecov_Obs estimates
     
     SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
-    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]] #Fbar
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1] #Fbar
     pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
     cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
-    # FMSY <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_FMSY_static"]]
-    # SSB_FXSPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_SSB_FXSPR_static"]]
-    # FBar_SXPR <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["log_Fbar_XSPR_static"]]
     
-    # recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,1], length(years)) # REPORTED PER ASSESSMENT
-    # recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$mean_rec_pars[,2], length(years))# REPORTED PER ASSESSMENT
-    # 
-    # ecov_processpar_mean <- rep(exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[1,]), length(years))# REPORTED PER ASSESSMENT
-    # ecov_processpar_sd <- rep(exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[2,]), length(years))# REPORTED PER ASSESSMENT
-    # ecov_processpar_rho <- rep(invlogit(mods[[i]][[paste0("Mod",k)]][['par.est']][[1]]$Ecov_process_pars[3,]), length(years))# REPORTED PER ASSESSMENT
-    ecov_processpar_mean_overall <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][1,], length(years))
-    ecov_processpar_sd_overall <- rep(exp(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][2,]), length(years))
-    ecov_processpar_rho_overall <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]][3,], length(years))
+    Ecov_beta_R_OM <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["par"]][["Ecov_beta_R"]], length(years))
     
-    # THESE ARE THE OVERALL ESTS: Mods_proj[[1]][["Mod1"]][["em_full"]][[1]][["parList"]][["Ecov_process_pars"]]
     om_recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
     om_recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
     
-    em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]], length(years))
-    om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']], length(years))
+    em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]][1], length(years))
+    om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']][1], length(years))
+    
     om_naa_oldest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,6]
-    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["pred_NAA"]][,,,6], rep(NA,5))
+    om_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,6], length(years))
+    
+    om_naa_youngest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1]
+    om_naasigma_youngest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,1], length(years))
+    
+    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 5))
+    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 5))
+    # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
+    # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
     
     
     # RECORDING INFO THAT IS REPORTED PER ASSESSMENT YEAR
         df_perAssessment <- data.frame(years_trace = years,
                                    recPars_a = NA,
                                    recPars_b = NA,
-                                   Ecov_processPars_mean_assessment = NA,#IN LOG SPACE. TRANSFORM ? # mean ecov param
-                                   Ecov_processPars_sd_assessment = NA,#IN LOG SPACE. TRANSFORM ? # sd ecov param
-                                   Ecov_processPars_rho_assessment = NA)
+                                   Ecov_beta_R_EM = NA,
+                                   em_naasigma_oldest = NA, 
+                                   em_naasigma_youngest = NA)
     for(q in 1:length(years)){
       if(years[q] %in% assess.years){
-        
+
         assess.no <- which(assess.years == years[q])
-        
+
         df_perAssessment$recPars_a[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,1] # REPORTED PER ASSESSMENT
         df_perAssessment$recPars_b[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,2] # REPORTED PER ASSESSMENT
+
+        df_perAssessment$Ecov_beta_R_EM[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["Ecov_beta_R"]]
         
-        df_perAssessment$Ecov_processPars_mean_assessment[q:(q+2)] <- exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[1,])
-        df_perAssessment$Ecov_processPars_sd_assessment[q:(q+2)] <- exp(mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[2,])
-        df_perAssessment$Ecov_processPars_rho_assessment[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$Ecov_process_pars[3,]
+        df_perAssessment$em_naasigma_oldest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,6]
+        df_perAssessment$em_naasigma_youngest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,1]
         
-      }
+      }}
     
     data_List <- data.frame(Year = years,
                       EM_name = em_name,
                       seed_no = Seed,
-                      Temp_OM = om_ecovx[1:100,],
-                      Temp_OM_Obs = om_ecovObs[1:100,],
-                      Temp_EM = em_ecovx[1:100,],
-                      Temp_EM_Obs = em_ecovObs[1:100,],
+                      Temp_OM = om_ecovx,
+                      Temp_OM_Obs = om_ecovObs,
+                      Temp_EM = em_ecovx,
+                      Temp_EM_Obs = em_ecovObs,
                       SSB = SSB_om,
-                      FBar = FBar_om[,1], #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
+                      FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
                       Catch_advice = cat_advice_em,
                       # log_FMSY_stat = FMSY,
@@ -441,24 +447,27 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       # log_FBar_SXPR_stat = FBar_SXPR
                       EM_recPars_a = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
                       EM_recPars_b = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
-                      Ecov_processPars_mean_overall = ecov_processpar_mean_overall,#IN LOG SPACE. TRANSFORM?
-                      Ecov_processPars_sd_overall = ecov_processpar_sd_overall,#IN LOG SPACE. TRANSFORM?
-                      Ecov_processPars_rho_overall = ecov_processpar_rho_overall,
-                      Ecov_processPars_mean_assessment = df_perAssessment$Ecov_processPars_mean_assessment,
-                      Ecov_processPars_sd_assessment = df_perAssessment$Ecov_processPars_sd_assessment,
-                      Ecov_processPars_rho_assessment = df_perAssessment$Ecov_processPars_rho_assessment,
+                      Ecov_beta_R_OM = Ecov_beta_R_OM,#IN LOG SPACE. TRANSFORM?
+                      Ecov_beta_R_EM = df_perAssessment$Ecov_beta_R_EM,
                       OM_RecPar_A = om_recpar_a,#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
                       OM_RecPar_B = om_recpar_b,
                       EM_q = em_q,
                       OM_q = om_q,
                       OM_NAA_oldest = om_naa_oldest,
-                      EM_PredNAA_oldest = em_naa_oldest
+                      OM_NAA_youngest = om_naa_youngest,
+                      EM_NAA_oldest = em_naa_oldest,
+                      EM_NAA_youngest = em_naa_youngest,
+                      
+                      OM_NAAsigma_oldest = om_naasigma_oldest,
+                      OM_NAAsigma_youngest = om_naasigma_youngest,
+                      EM_NAAsigma_oldest = df_perAssessment$em_naasigma_oldest,
+                      EM_NAAsigma_youngest = df_perAssessment$em_naasigma_youngest
                       )
     
     ests <- rbind(ests, data_List)
     
   }
-}}
+  }
 Bias_ests[[j]] <- ests
 }
 
@@ -483,9 +492,9 @@ rm('mods')
 # PROJECTIONS
 paramEsts_projs <- Proj_ests %>%
   group_by(EM_name) %>%
-  summarize(mean_ecov = mean(Ecov_processPars_mean),
-          sd_ecov = mean(Ecov_processPars_sd),
-          logit_rho = mean(Ecov_processPars_logit_rho))
+  summarize(mean_ecov = mean(Ecov_processPars_mean_assessment, na.rm =TRUE),
+          sd_ecov = mean(Ecov_processPars_sd_assessment, na.rm =TRUE),
+          logit_rho = mean(Ecov_processPars_rho_assessment, na.rm =TRUE))
 
 #Ecov_processPars_mean
 
@@ -503,7 +512,7 @@ for(i in 1:4){
   #mean
   data_clean <- data_use %>%
   group_by(EM_name) %>%
-  summarize(ecov_mean = mean(Ecov_processPars_mean))
+  summarize(ecov_mean = mean(Ecov_processPars_mean_assessment))
   
   colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
   
@@ -512,7 +521,7 @@ for(i in 1:4){
   #sd
   data_clean <- data_use %>%
   group_by(EM_name) %>%
-  summarize(ecov_mean = mean(Ecov_processPars_sd))
+  summarize(ecov_mean = mean(Ecov_processPars_sd_assessment))
   
   colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
   
@@ -521,7 +530,7 @@ for(i in 1:4){
   #logit_rho
   data_clean <- data_use %>%
   group_by(EM_name) %>%
-  summarize(ecov_mean = mean(Ecov_processPars_logit_rho))
+  summarize(ecov_mean = mean(Ecov_processPars_rho_assessment))
   
   colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
   
@@ -755,7 +764,28 @@ print(barplot)
 
 ```
 
-
+```{r bbmsy}
+# r is seed, m is em NO
+model <- mods[[r]][[m]]
+                      input <- model$om$input
+                      input$random <- NULL
+                      
+                      if (!is.null(input$data$FXSPR_init)) {
+                        input$data$FXSPR_init[] <- 2
+                      }
+                      if (!is.null(input$data$FXSPR_static_init)) {
+                        input$data$FXSPR_static_init[] <- 2
+                      }
+                      
+                      om_brp <- try(
+                        fit_wham(input,
+                                 n.newton         = 10,
+                                 do.fit           = FALSE,
+                                 do.brps          = TRUE,
+                                 MakeADFun.silent = TRUE),
+                        silent = TRUE
+                      )
+```
 
 
 
