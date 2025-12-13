@@ -485,6 +485,40 @@ rm('mods')
 # Do I want NAA
 ```
 
+```{r bbmsy}
+
+library(wham)
+# r is seed, m is em NO
+
+mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
+for(r in length(mods)){
+  for(m in length(mods[[r]]))
+  {
+model <- mods[[r]][[m]]
+                      input <- model$om$input
+                      input$random <- NULL
+                      
+                      if (!is.null(input$data$FXSPR_init)) {
+                        input$data$FXSPR_init[] <- 2
+                      }
+                      if (!is.null(input$data$FXSPR_static_init)) {
+                        input$data$FXSPR_static_init[] <- 2
+                      }
+                      
+                      om_brp <- try(
+                        fit_wham(input,
+                                 n.newton         = 10,
+                                 do.fit           = FALSE,
+                                 do.brps          = TRUE,
+                                 MakeADFun.silent = TRUE),
+                        silent = TRUE
+                      )
+                      
+  }}
+
+save
+```
+
 ```{r paramEsts}
 # MAKE A TABLE OF THE PARAMETER ESTIMATES
 #Proj_ests <- as.data.frame(Proj_ests)
@@ -764,28 +798,7 @@ print(barplot)
 
 ```
 
-```{r bbmsy}
-# r is seed, m is em NO
-model <- mods[[r]][[m]]
-                      input <- model$om$input
-                      input$random <- NULL
-                      
-                      if (!is.null(input$data$FXSPR_init)) {
-                        input$data$FXSPR_init[] <- 2
-                      }
-                      if (!is.null(input$data$FXSPR_static_init)) {
-                        input$data$FXSPR_static_init[] <- 2
-                      }
-                      
-                      om_brp <- try(
-                        fit_wham(input,
-                                 n.newton         = 10,
-                                 do.fit           = FALSE,
-                                 do.brps          = TRUE,
-                                 MakeADFun.silent = TRUE),
-                        silent = TRUE
-                      )
-```
+
 
 
 
