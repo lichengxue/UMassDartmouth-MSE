@@ -24,6 +24,7 @@ library(dplyr)
 library(knitr)
 library(ggpubr)
 library(secr)
+library(wham)
 
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
@@ -487,14 +488,43 @@ rm('mods')
 
 ```{r bbmsy}
 
-library(wham)
 # r is seed, m is em NO
 
 mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
-for(r in length(mods)){
-  for(m in length(mods[[r]]))
+
+BRP_data <- data.frame(Year = c(), # which EM comes up wiht most accurate BRP, too optimistic/too pessimistic eventual over or under exploitation. % model runs em exceeds catch goal
+                      EM_name = c(),
+                      Seed_no = c(),
+                      
+                      OM_Fbar = c(),
+                      OM_SSB = c(),
+                      OM_log_FMSY_static = c(),
+                      OM_log_FMSY = c(),
+                      OM_log_SSB_FXSPR_static = c(),
+                      OM_log_SSB_FXSPR = c(),
+                      OM_log_Fbar_XSPR = c(),
+                      OM_log_Fbar_XSPR_static = c(),
+                      OM_log_FXSPR_static = c(),
+                      
+                      EM_Fbar = c(),
+                      EM_SSB = c(),
+                      EM_log_FMSY_static = c(),
+                      EM_log_FMSY = c(),
+                      EM_log_SSB_FXSPR_static = c(),
+                      EM_log_SSB_FXSPR = c(),
+                      EM_log_Fbar_XSPR = c(),
+                      EM_log_Fbar_XSPR_static = c(),
+                      EM_log_FXSPR_static = c()
+                      )
+
+for(r in 1:length(mods)){ # r is seed No, m is model
+  for(m in 1:length(mods[[r]]))
   {
-model <- mods[[r]][[m]]
+    if(is.null(mods[[r]][[m]])){
+      mods[[r]] <- NA
+    }
+    
+    model <- mods[[r]][[m]]
                       input <- model$om$input
                       input$random <- NULL
                       
@@ -513,10 +543,111 @@ model <- mods[[r]][[m]]
                                  MakeADFun.silent = TRUE),
                         silent = TRUE
                       )
+      
+      year <- om_brp[["years"]]
+      eM_name <- rep(ModNames_proj[m], length(om_brp[["years"]]))
+      seed_no <- rep(r, length(om_brp[["years"]]))
+      
+      
+      # OM Info                
+      oM_Fbar <- om_brp[["rep"]][["Fbar"]][,1]
+      oM_SSB <- om_brp[["rep"]][["SSB"]]
+                      
+      oM_log_FMSY_static <- rep(om_brp[["rep"]][["log_FMSY_static"]], length(om_brp[["years"]]))
+      oM_log_FMSY <- om_brp[["rep"]][["log_FMSY"]]
+      
+      oM_log_SSB_FXSPR_static <- rep(om_brp[["rep"]][["log_SSB_FXSPR_static"]][1], length(om_brp[["years"]]))
+      oM_log_SSB_FXSPR <-  om_brp[["rep"]][["log_SSB_FXSPR"]][,1]
+      
+      oM_log_Fbar_XSPR <- om_brp[["rep"]][["log_Fbar_XSPR"]][,1]
+      oM_log_Fbar_XSPR_static <- rep(om_brp[["rep"]][["log_Fbar_XSPR_static"]][1], length(om_brp[["years"]]))
+      oM_log_FXSPR_static <- rep(om_brp[["rep"]][["log_FXSPR_static"]], length(om_brp[["years"]]))
+      
+      #EM COMPARISONS                
+      eM_Fbar <- c(model[["em_list"]][[16]][["Fbar"]][,1], rep(NA, 5))
+      eM_SSB <- c(model[["em_list"]][[16]][["SSB"]], rep(NA, 5))
+                  
+      eM_log_FMSY <- c(model[["em_list"]][[16]][["log_FMSY"]], rep(NA, 5))
+      # EM_log_FMSY_static <- rep(model[["em_list"]][[16]][["log_FMSY_static"]], length(om_brp[["years"]])) ### 1
+      
+      # EM_log_SSB_FXSPR_static <- rep(model[["em_list"]][[16]][["log_SPR_FXSPR_static"]][1], length(om_brp[["years"]]))###1
+      eM_log_SSB_FXSPR = c(model[["em_list"]][[16]][["log_SSB_FXSPR"]][,1], rep(NA, 5))
+                      
+      eM_log_Fbar_XSPR <- c(model[["em_list"]][[16]][["log_Fbar_XSPR"]][,1], rep(NA, 5))
+      # EM_log_Fbar_XSPR_static <- rep(model[["em_list"]][[16]][["log_Fbar_XSPR_static"]], length(om_brp[["years"]])) ###3
+                  
+      # EM_log_FXSPR_static <- rep(model$em_list[[16]]$log_FXSPR_static, length(om_brp[["years"]])) ###1
+      eM_log_FMSY_static <- rep(NA, 50)
+      eM_log_SSB_FXSPR_static <- rep(NA, 50)
+      eM_log_FXSPR_static <- rep(NA, 50)
+        
+      eM_log_Fbar_XSPR_static <- rep(NA, 50)
+      
+      
+      for(j in 1:length(model[["em_list"]])){
+        
+        eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(model[["em_list"]][[j]][["log_FMSY_static"]], 3)) ### 1
+        eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(model[["em_list"]][[j]][["log_SSB_FXSPR_static"]][1], 3)) ### 1
+        eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(model[["em_list"]][[j]][["log_SPR_FXSPR_static"]][1], 3)) ### 1
+        eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, model[["em_list"]][[j]][["log_Fbar_XSPR_static"]])
+          #rep(model[["em_list"]][[16]][["log_Fbar_XSPR_static"]], length(om_brp[["years"]])) ###3
+      }
+      
+      eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(NA, 2)) ### 1
+      eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(NA, 2)) ### 1
+      eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(NA, 2)) ### 1
+      eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, rep(NA, 2))
+      
+      data_List <- data.frame(Year = year,
+                      EM_name = eM_name,
+                      Seed_no = seed_no,
+                      
+                      OM_Fbar = oM_Fbar,
+                      OM_SSB = oM_SSB,
+                      OM_log_FMSY_static = oM_log_FMSY_static,
+                      OM_log_FMSY = oM_log_FMSY,
+                      OM_log_SSB_FXSPR_static = oM_log_SSB_FXSPR_static,
+                      OM_log_SSB_FXSPR = oM_log_SSB_FXSPR,
+                      OM_log_Fbar_XSPR = oM_log_Fbar_XSPR,
+                      OM_log_Fbar_XSPR_static = oM_log_Fbar_XSPR_static,
+                      OM_log_FXSPR_static = oM_log_FXSPR_static,
+                      
+                      EM_Fbar = eM_Fbar,
+                      EM_SSB = eM_SSB,
+                      EM_log_FMSY_static = eM_log_FMSY_static,
+                      EM_log_FMSY = eM_log_FMSY,
+                      EM_log_SSB_FXSPR_static = eM_log_SSB_FXSPR_static,
+                      EM_log_SSB_FXSPR = eM_log_SSB_FXSPR,
+                      EM_log_Fbar_XSPR = eM_log_Fbar_XSPR,
+                      EM_log_Fbar_XSPR_static = eM_log_Fbar_XSPR_static,
+                      EM_log_FXSPR_static = eM_log_FXSPR_static
+                      )
+    
+    BRP_data <- rbind(BRP_data, data_List)
+    
                       
   }}
 
-save
+BRP_data <- BRP_data %>%
+  rowwise() %>%
+  mutate(MSYOverfishing_OM = OM_Fbar/exp(OM_log_FMSY_static),
+         MSYOverfishing_EM = EM_Fbar/exp(EM_log_FMSY_static),
+         
+         Overfished_OM = OM_SSB/exp(OM_log_SSB_FXSPR_static),
+         Overfished_EM = EM_SSB/exp(EM_log_SSB_FXSPR_static),
+         
+         Overfishing_OM = OM_Fbar/exp(OM_log_Fbar_XSPR_static),
+         Overfishing_EM = EM_Fbar/exp(EM_log_Fbar_XSPR_static))
+
+
+
+
+
+
+
+
+saveRDS(BRP_data,'C:/Users/swulfing/Documents/MSE_results/BRP_data.rds')
+
 ```
 
 ```{r paramEsts}
