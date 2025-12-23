@@ -1,0 +1,43 @@
+#!/bin/bash
+#SBATCH -p cpu 
+#SBATCH -n 1
+#SBATCH --mem=16G 
+#SBATCH -t 01:00:00 
+#SBATCH --array=0-59%60 #####CHANGE NUMBER OF JOBS HERE
+#SBATCH --job-name=whamMSE
+#SBATCH --output=/dev/null
+#SBATCH --error=/dev/null
+
+cd work/pi_gfay_umassd_edu/Wulfing/Sophie ##### CHANGE WD HERE
+
+#set seeds 
+seeds=(124 125 126 127 128 129 130 131 132 133) ###### CHANGE SEEDS HERE
+
+#match seeds with block + sim number 
+sim_id=$SLURM_ARRAY_TASK_ID
+block=$((sim_id / 10 + 1)) #### CHANGE TO TOT NUMBER OF SEEDS
+index_in_block=$((sim_id % 10))
+seed=${seeds[$index_in_block]}
+
+#index running message files/logs by block_seed_sim
+mkdir -p logs
+logfile="logs/block${block}_seed${seed}_sim${sim_id}.out"
+exec > "$logfile" 2>&1
+scontrol update JobId=$SLURM_JOB_ID JobName=blk${block}_seed${seed}_sim${sim_id}
+
+#output file directory 
+outdir="Outputs/block${block}"
+mkdir -p "$outdir"
+
+#load conda
+module load conda/latest
+conda activate testName ### CHAGE TO NAME OF YOUR CONDA ENVIRO
+
+echo "Simulation $sim_id using seed $seed in block $block"
+
+#run R script
+Rscript ClusterTest11.18_Test.R \
+  --seed $seed \
+  --sim_id $SLURM_ARRAY_TASK_ID \
+  --block $block \
+  --outdir $outdir

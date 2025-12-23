@@ -144,6 +144,44 @@ FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, 
 
 ```
 
+```{r BoxPlot_fix}
+#source('FIXEDplot_ssb_performance.R')
+
+
+# PROJECTIONS
+#mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
+
+mods <- mods_cleaned
+main_dir <- paste0(PlotLocations, '/Combo')
+main.dir <- main_dir
+output_dir <- "RadarPlot_fix"
+sub.dir <- output_dir
+output_format <- c("png") # or html or png
+width <- 10
+height <- 7
+dpi <- 300
+col.opt <- "D"
+new_model_names <- ModNames_proj
+base.model <- "Mod_AR1Ecov"
+start.years <- 51
+use.n.years.first <- 1
+use.n.years.last <- 10
+is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
+method <- "median"
+
+source('FIXEDplot_ssb_performance.R')
+FIXEDplot_ssb_performance(mods, is.nsim, main.dir, sub.dir, var = "SSB", width, 
+          height, dpi, col.opt, method, outlier.opt = NA, 
+          plot.style = "median_iqr", show.whisker = TRUE, use.n.years = 10, 
+          new_model_names)
+
+source('FIXEDplot_fbar_performance.R')
+FIXEDplot_fbar_performance(mods, is.nsim, main_dir, output_dir, "Fbar", width, height, dpi, col.opt, method, outlier.opt = NA, plot.style = "median_iqr", show.whisker = TRUE, f.ymin = NULL, f.ymax = NULL, use.n.years = 10, new_model_names)
+
+source('FIXEDplot_catch_performance.R')
+FIXEDplot_catch_performance(mods, is.nsim, main_dir, output_dir, "Catch", width, height, dpi, col.opt, method, outlier.opt = NA, plot.style = "median_iqr", show.whisker = TRUE, use.n.years = 10, new_model_names)
+```
+
 ``` {r MakeYearlyDF}
 
 # NOT PULLING OUT REFERERNCE POINTS. WHYYYYY

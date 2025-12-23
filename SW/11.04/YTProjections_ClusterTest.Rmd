@@ -10,8 +10,8 @@ output: html_document
 # wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
 # setwd(wd)
 
-PlotLocations <- 'MSEResults'
-ModelLocations <- 'MSEResults'
+PlotLocations <- 'Outputs'
+ModelLocations <- 'Outputs'
 
 # devtools::install_github(
 #   "lichengxue/whamMSE",
