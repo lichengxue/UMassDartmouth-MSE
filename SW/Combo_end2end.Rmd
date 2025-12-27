@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
+knitr::opts_chunk$set(root.dir = "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW", echo = FALSE, cache = TRUE, warning = FALSE)
 wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
 setwd(wd)
 
