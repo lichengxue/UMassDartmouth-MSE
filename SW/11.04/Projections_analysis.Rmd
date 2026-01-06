@@ -29,7 +29,7 @@ library(wham)
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
 # Uncomment this when you run, R just likes to rerun the setup chunk which kills me
-# Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
+ Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
 # Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
 # Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
 # Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
@@ -241,14 +241,14 @@ for(i in 1:length(mods)){ # i = seed, j = model
 
   for(k in 1:length(ModNames_proj)){
       
-    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 5) #Year
+    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 3) #Year
     em_name <- rep(ModNames_proj[k], length(years)) # Model Name
     Seed <- rep(i, length(years))
       # Ecov_x estimates
-    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:100,1] #OM_ecov Temps
-    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:100,1] # om obs temps
-    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:100,1] #EM_ecov Temps
-    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:100,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:101,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:101,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:101,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:101,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
     # Ecov_Obs estimates
     
     SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
@@ -270,8 +270,8 @@ for(i in 1:length(mods)){ # i = seed, j = model
     om_naa_youngest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1]
     om_naasigma_youngest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,1], length(years))
     
-    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 5))
-    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 5))
+    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 6))
+    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 6))
     # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
     # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
     
@@ -309,7 +309,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       SSB = SSB_om,
                       FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
-                      Catch_advice = cat_advice_em,
+                      Catch_advice = cat_advice_em[1:101],
                       # log_FMSY_stat = FMSY,
                       # log_SSB_FXSPR_stat = SSB_FXSPR,
                       # log_FBar_SXPR_stat = FBar_SXPR
@@ -413,14 +413,14 @@ for(i in 1:length(mods)){ # i = seed, j = model
 #for(i in 1:length(mods)){ # i = seed, j = model
   for(k in 1:length(ModNames_bias)){
       
-    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 5) #Year
+    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 3) #Year
     em_name <- rep(ModNames_bias[k], length(years)) # Model Name
     Seed <- rep(i, length(years))
       # Ecov_x estimates
-    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:100,1] #OM_ecov Temps
-    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:100,1] # om obs temps
-    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:100,1] #EM_ecov Temps
-    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:100,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:101,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:101,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:101,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:101,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
     # Ecov_Obs estimates
     
     SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
@@ -480,7 +480,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       SSB = SSB_om,
                       FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
-                      Catch_advice = cat_advice_em,
+                      Catch_advice = cat_advice_em[1:101],
                       # log_FMSY_stat = FMSY,
                       # log_SSB_FXSPR_stat = SSB_FXSPR,
                       # log_FBar_SXPR_stat = FBar_SXPR
@@ -602,16 +602,16 @@ for(r in 1:length(mods)){ # r is seed No, m is model
       oM_log_FXSPR_static <- rep(om_brp[["rep"]][["log_FXSPR_static"]], length(om_brp[["years"]]))
       
       #EM COMPARISONS                
-      eM_Fbar <- c(model[["em_list"]][[16]][["Fbar"]][,1], rep(NA, 5))
-      eM_SSB <- c(model[["em_list"]][[16]][["SSB"]], rep(NA, 5))
+      eM_Fbar <- c(model[["em_list"]][[16]][["Fbar"]][,1], rep(NA, 6))
+      eM_SSB <- c(model[["em_list"]][[16]][["SSB"]], rep(NA, 6))
                   
-      eM_log_FMSY <- c(model[["em_list"]][[16]][["log_FMSY"]], rep(NA, 5))
+      eM_log_FMSY <- c(model[["em_list"]][[16]][["log_FMSY"]], rep(NA, 6))
       # EM_log_FMSY_static <- rep(model[["em_list"]][[16]][["log_FMSY_static"]], length(om_brp[["years"]])) ### 1
       
       # EM_log_SSB_FXSPR_static <- rep(model[["em_list"]][[16]][["log_SPR_FXSPR_static"]][1], length(om_brp[["years"]]))###1
-      eM_log_SSB_FXSPR = c(model[["em_list"]][[16]][["log_SSB_FXSPR"]][,1], rep(NA, 5))
+      eM_log_SSB_FXSPR <- c(model[["em_list"]][[16]][["log_SSB_FXSPR"]][,1], rep(NA, 6))
                       
-      eM_log_Fbar_XSPR <- c(model[["em_list"]][[16]][["log_Fbar_XSPR"]][,1], rep(NA, 5))
+      eM_log_Fbar_XSPR <- c(model[["em_list"]][[16]][["log_Fbar_XSPR"]][,1], rep(NA, 6))
       # EM_log_Fbar_XSPR_static <- rep(model[["em_list"]][[16]][["log_Fbar_XSPR_static"]], length(om_brp[["years"]])) ###3
                   
       # EM_log_FXSPR_static <- rep(model$em_list[[16]]$log_FXSPR_static, length(om_brp[["years"]])) ###1
@@ -631,10 +631,10 @@ for(r in 1:length(mods)){ # r is seed No, m is model
           #rep(model[["em_list"]][[16]][["log_Fbar_XSPR_static"]], length(om_brp[["years"]])) ###3
       }
       
-      eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(NA, 2)) ### 1
-      eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(NA, 2)) ### 1
-      eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(NA, 2)) ### 1
-      eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, rep(NA, 2))
+      # eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(NA, 2)) ### 1
+      # eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(NA, 2)) ### 1
+      # eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(NA, 2)) ### 1
+      # eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, rep(NA, 2))
       
       data_List <- data.frame(Year = year,
                       EM_name = eM_name,

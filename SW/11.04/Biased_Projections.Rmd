@@ -877,20 +877,25 @@ scenarios <- list(
 
 EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
   #geom_line(aes(color = "OM")) +
-  geom_line( aes(x = scenarios[["AR1"]][["year"]], y = scenarios[["AR1"]][["mean"]], color = 'AR1')) +
+  #geom_line( aes(x = scenarios[["AR1"]][["year"]], y = scenarios[["AR1"]][["mean"]], color = 'AR1')) +
   geom_line( aes(x = scenarios[["LOW"]][["year"]], y = scenarios[["LOW"]][["mean"]], color = 'LOW')) +
   geom_line( aes(x = scenarios[["MEDLOW"]][["year"]], y = scenarios[["MEDLOW"]][["mean"]], color = 'MEDLOW')) +
   geom_line( aes(x = scenarios[["MED"]][["year"]], y = scenarios[["MED"]][["mean"]], color = 'MED')) +
   geom_line( aes(x = scenarios[["HIGH"]][["year"]], y = scenarios[["HIGH"]][["mean"]], color = 'HIGH')) +
-  geom_line(aes(color = "OM")) +
-  scale_color_manual(name='Model',
-                     breaks=c('OM', 'AR1', 'LOW', 'MEDLOW', 'MED', 'HIGH'),
-                     values=c('OM'="#000000", 
-                              'AR1'="#CD0BBC",
-                              'LOW' =  "#3283FE",
-                              'MEDLOW' = "#F5C710" ,
+  geom_line( aes(x = c(scenarios[["HIGH"]][["year"]][1:51], rep(NA, 50)), y = c(scenarios[["HIGH"]][["mean"]][1:51], rep(NA, 50)), color = 'black')) +
+  geom_vline(xintercept=2022, linetype="dashed", color = "black") +
+  #geom_line(aes(color = "OM")) +
+  scale_color_manual(name = 'Projection Scenario',
+                     breaks = c('HIGH', 'MED', 'MEDLOW', 'LOW'), #breaks = c('OM', 'AR1', 'LOW', 'MEDLOW', 'MED', 'HIGH'),
+                     values = c(
+                              # 'OM'="#000000", 
+                              # 'AR1'="#CD0BBC",
+                              'HIGH' = "red",
                               'MED' = "#00BA38",
-                              'HIGH' = "red")) +
+                              'MEDLOW' = "#F5C710" ,
+                              'LOW' =  "#3283FE"), 
+                     labels = c('High', 'Medium', 'Medium-Low', 'Low')) + #c('OM','AR(1)','Low','Medium Low','Medium', 'High')) +
+  guides(fill = guide_legend(reverse = TRUE)) +
   ylab("Bottom Temperature (°C)") +
   xlab("Year")
   #xlim(2019,2052)

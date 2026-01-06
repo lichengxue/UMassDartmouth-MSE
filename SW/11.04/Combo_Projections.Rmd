@@ -458,14 +458,31 @@ scenarios <- list(
 
 EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
   #geom_line(aes(color = "OM")) +
-  geom_line( aes(x = scenarios[["AR1"]][["year"]], y = scenarios[["AR1"]][["mean"]], color = 'AR1')) +
-  geom_line( aes(x = scenarios[["HistAvg"]][["year"]], y = scenarios[["HistAvg"]][["mean"]], color = 'HistAvg')) +
-  geom_line( aes(x = scenarios[["RecWind"]][["year"]], y = scenarios[["RecWind"]][["mean"]], color = 'RecWind')) +
-  geom_line( aes(x = scenarios[["RecTrend"]][["year"]], y = scenarios[["RecTrend"]][["mean"]], color = 'RecTrend')) +
-  geom_line( aes(x = scenarios[["TermYear"]][["year"]], y = scenarios[["TermYear"]][["mean"]], color = 'TermYear')) +
-  geom_line( aes(x = scenarios[["GoodProj"]][["year"]], y = scenarios[["GoodProj"]][["mean"]], color = 'GoodProj')) +
-  geom_line( aes(x = scenarios[["BadProj"]][["year"]], y = scenarios[["BadProj"]][["mean"]], color = 'BadProj')) +
-  geom_line(aes(color = "OM")) +
+  
+  # geom_line( aes(x = c(rep(NA, 50), scenarios[["AR1"]][["year"]][51:101]), 
+  #                y = c(rep(NA, 50),scenarios[["AR1"]][["mean"]][51:101]), color = 'AR1')) +
+  # 
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["HistAvg"]][["year"]][51:101]),
+                 y = c(rep(NA, 50), scenarios[["HistAvg"]][["mean"]][51:101]), color = 'HistAvg')) +
+# 
+#   geom_line( aes(x =c(rep(NA, 50),  scenarios[["RecWind"]][["year"]][51:101]),
+#                  y = c(rep(NA, 50), scenarios[["RecWind"]][["mean"]][51:101]), color = 'RecWind')) +
+# 
+#   geom_line( aes(x = c(rep(NA, 50), scenarios[["RecTrend"]][["year"]][51:101]),
+#                  y = c(rep(NA, 50), scenarios[["RecTrend"]][["mean"]][51:101]), color = 'RecTrend')) +
+
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["TermYear"]][["year"]][51:101]),
+                 y = c(rep(NA, 50), scenarios[["TermYear"]][["mean"]][51:101]), color = 'TermYear')) +
+
+  # geom_line( aes(x = c(rep(NA, 50), scenarios[["GoodProj"]][["year"]][51:101]),
+  #                y = c(rep(NA, 50), scenarios[["GoodProj"]][["mean"]][51:101]), color = 'GoodProj')) +
+  # 
+  # geom_line( aes(x = c(rep(NA, 50), scenarios[["BadProj"]][["year"]][51:101]),
+  #                y = c(rep(NA, 50), scenarios[["BadProj"]][["mean"]][51:101]), color = 'BadProj')) +
+
+  geom_line(aes(x = c(1972, om_with_data_P[["years"]]), 
+                y = om_with_data_P$rep$Ecov_x, color = "OM")) + # om_with_data_P$rep$Ecov_x # om_with_data_P$input$data$Ecov_obs
+  geom_vline(xintercept=2022, linetype="dashed", color = "black") +
   scale_color_manual(name='Model',
                      breaks=c('OM', 'AR1', 'RecWind', 'HistAvg', 'RecTrend', 'TermYear', 'GoodProj', 'BadProj'),
                      values=c('OM'="#000000", 
@@ -475,10 +492,12 @@ EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
                               'RecTrend' = "#00BA38",
                               'TermYear' = "red",
                               'GoodProj' = 'purple',
-                              'BadProj' = 'orange')) +
+                              'BadProj' = 'orange'),
+                     labels = c('OM','AR(1)','Recent Window','Historical Average','Recent Trend','Terminal Year','Good Projection', 'Bad Projection')) +
+  xlim(2018,2072) +
   ylab("Bottom Temperature (°C)") +
   xlab("Year")
-  #xlim(2019,2052)
+
 print(EMtempPlot)
 ggsave(paste0(PlotLocations,'/EMtempPlot.png'), plot = EMtempPlot)
 ########################################################################################################
