@@ -69,11 +69,16 @@ assess.years  <- seq(tail(base.years,1), year_end + MSE_years - assess.interval,
 ecov_om <- list(
   label = "bt_temp",
   mean  = as.matrix(c(env.dat_me$bt_temp, rep(NA_real_, 51))),   # Historical temperature data
-  logsigma = "est_1",                                            # Obs standard errors. Estimated value for each time step as random effects with two parameters (mean, var)
+  logsigma = "est_1",                                            # Obs standard errors. 
   year  = 1972:2072,                                            # includes 1-lag year (1972) + 1973–2028
   use_obs = matrix(1, ncol = 1, nrow = 101),                     # observed everywhere (we may override in MSE)
-  process_model = "ar1",                                         # 1st order autoregressive process model
+  process_model = "ar1",                                         # 1st order Auto-Regressive process model
   recruitment_how = matrix("controlling-lag-1-linear")           # how each ecov affects recruitment for each stock. 
+  
+  
+  
+  
+ # Obs standard errors. Estimated value for each time step as random effects with two parameters (mean, var) 
 #   "controlling"
 # pre-recruit density-independent mortality.
 # = "lag-n"

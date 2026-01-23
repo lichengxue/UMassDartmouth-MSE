@@ -78,7 +78,7 @@ seeds <- 10
 ```
 
 ```{r SpiderPlot_fix}
-source('plotFixTest.R')
+source('SpiderPlotFix.R')
 
 
 # PROJECTIONS
@@ -94,7 +94,7 @@ width <- 10
 height <- 7
 dpi <- 300
 col.opt <- "D"
-new_model_names <- ModNames_proj
+new_model_names <- c("AR(1)", "Historical Avg", "Recent Window", "Recent Trend", "Terminal Year", "No Ecov", "Good Projection", "Bad Projection")# ModNames_proj
 base.model <- "Mod_AR1Ecov"
 start.years <- 51
 use.n.years.first <- 1
@@ -201,7 +201,8 @@ Proj_ests <- data.frame(Year = c(),
                       Temp_OM_Obs = c(),
                       Temp_EM = c(),
                       Temp_EM_Obs = c(),
-                      SSB = c(), # SSB_real
+                      SSB_OM = c(), # SSB_real
+                      SSB_EM = c(),
                       FBar = c(), #f bar OM
                       Pred_catch = c(), #Predited catch om
                       Catch_advice = c(),  # catch Advice from EM
@@ -225,7 +226,9 @@ Proj_ests <- data.frame(Year = c(),
                       OM_NAAsigma_oldest = c(),
                       OM_NAAsigma_youngest = c(),
                       EM_NAAsigma_oldest = c(),
-                      EM_NAAsigma_youngest = c()
+                      EM_NAAsigma_youngest = c(),
+                      OM_NAA_devs = c(),
+                      EM_NAA_devs = c()
                       )
 
 mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
@@ -252,6 +255,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
     # Ecov_Obs estimates
     
     SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
+    SSB_em <- c(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["SSB"]], rep(NA, 3))
     FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1] #Fbar
     pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
     cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
@@ -272,6 +276,9 @@ for(i in 1:length(mods)){ # i = seed, j = model
     
     em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 6))
     em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 6))
+    
+    om_naa_devs <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA_devs"]][1,1,,1]
+    em_naa_devs <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[17]][["NAA_devs"]][1,1,,1], rep(NA,3))
     # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
     # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
     
@@ -307,6 +314,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       Temp_EM = em_ecovx,
                       Temp_EM_Obs = em_ecovObs,
                       SSB = SSB_om,
+                      SSB_EM = SSB_em,
                       FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
                       Catch_advice = cat_advice_em[1:101],
@@ -329,7 +337,9 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       OM_NAAsigma_oldest = om_naasigma_oldest,
                       OM_NAAsigma_youngest = om_naasigma_youngest,
                       EM_NAAsigma_oldest = df_perAssessment$em_naasigma_oldest,
-                      EM_NAAsigma_youngest = df_perAssessment$em_naasigma_youngest
+                      EM_NAAsigma_youngest = df_perAssessment$em_naasigma_youngest,
+                      OM_NAA_devs = om_naa_devs,
+                      EM_NAA_devs = em_naa_devs
                       )
     
     Proj_ests <- rbind(Proj_ests, data_List)
