@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
 wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
 setwd(wd)
 
-PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots/Combo'
-ModelLocations <- 'C:/Users/swulfing/Documents/MSE_results/Combo'
+PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots/5YrPlots'
+ModelLocations <- 'C:/Users/swulfing/Documents/MSE_results/5YrPlots'
 
 # devtools::install_github(
 #   "lichengxue/whamMSE",
@@ -61,7 +61,7 @@ MSE_years     <- 50L                                             # projection/fe
 n_proj_years  <- (year_end - year_start + 1L) + MSE_years       # If 6 yr MSE: 50 + 6 = 56, but Ecov uses lag year so 57 rows later
 
 base.years    <- year_start:year_end                             # c(1973,...,2022)
-assess.interval <- 3L                                            # assess every 3 yrs
+assess.interval <- 5L                                            # assess every 3 yrs
 assess.years  <- seq(tail(base.years,1), year_end + MSE_years - assess.interval, by = assess.interval)
 
 ### OM_ECOV
@@ -194,12 +194,6 @@ M <- list(
 sigma_vals <- array(0.5, dim = c(n_stocks, n_regions, n_ages))
 sigma_vals[,,1]    <- 0.655
 sigma_vals[,,2:6]  <- 0.720
-
-# # SENSITIVITY TEST
-# sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
-# sigma_vals[,,1]    <- 0.2
-# sigma_vals[,,2:6]  <- 0.2
-
 
 NAA_re <- list(
   N1_model     = rep("age-specific-fe", n_stocks),
@@ -403,13 +397,15 @@ RecTrend <- data.frame(year = ecov_me$year,
 k <- 51
 
 for(i in 0:51){
-  if (i %% 3 == 0){
-    HistAvg[(i+1):(i+3)] <- mean(ecov_om_P$mean[(1:k)])
-    RecWind[(i+1):(i+3)] <- mean(ecov_om_P$mean[((k-4):k)])
+  if (i %% 5 == 0){
+    HistAvg[(i+1):(i+5)] <- mean(ecov_om_P$mean[(1:k)])
+    RecWind[(i+1):(i+5)] <- mean(ecov_om_P$mean[((k-4):k)])
     om_RecentTrend <- summary(lm(ecov_om_P$mean[((k-4):k)] ~ ecov_om_P$year[((k-4):k)]))
     RecTrend$Temp[(i+1)] <- om_RecentTrend[["coefficients"]][1] + (om_RecentTrend[["coefficients"]][2] * ecov_om_P$year[k])
     RecTrend$Temp[(i+2)] <- om_RecentTrend[["coefficients"]][1] + (om_RecentTrend[["coefficients"]][2] * ecov_om_P$year[k + 1])
     RecTrend$Temp[(i+3)] <- om_RecentTrend[["coefficients"]][1] + (om_RecentTrend[["coefficients"]][2] * ecov_om_P$year[k + 2])
+    RecTrend$Temp[(i+4)] <- om_RecentTrend[["coefficients"]][1] + (om_RecentTrend[["coefficients"]][2] * ecov_om_P$year[k + 3])
+    RecTrend$Temp[(i+5)] <- om_RecentTrend[["coefficients"]][1] + (om_RecentTrend[["coefficients"]][2] * ecov_om_P$year[k + 4])
   }
   k <- k + 1
 }
@@ -502,7 +498,8 @@ EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
                      labels = c('OM','AR(1)','Recent Window','Historical Average','Recent Trend','Terminal Year','Good Projection', 'Bad Projection')) +
   # xlim(2018,2072) +
   ylab("Bottom Temperature (°C)") +
-  xlab("Year")
+  xlab("Year") +
+  xlim(2050,2055)
 
 print(EMtempPlot)
 ggsave(paste0(PlotLocations,'/EMtempPlot.png'), plot = EMtempPlot)
