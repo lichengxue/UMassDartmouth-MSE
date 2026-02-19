@@ -1,5 +1,5 @@
 ---
-title: "5yrProjections_Analysis"
+title: "Projections_Analysis"
 author: "Sophie Wulfing"
 date: "2025-11-13"
 output:
@@ -9,7 +9,9 @@ output:
 
 ```{r setup, include=FALSE}
 
-# NOTE: THIS IS SAVING OVER THE NORMAL PROJECTIONS ANALYSIS STUFF JUST SO I CAN JUST RUN THE MANUSCRIPT FOR COMPARISON. REDO PROJECTIONS ANALYSIS BEFORE MAKING DRAFT
+# Where you left off:
+# Then, starting on line 610 from UpdateMSEcode_CHENGEX find params he pulls out and label what they are. Then go through MSE-end2end, adn MSE_30yr_EMFix for stuff to pull out
+# Then go back through manuscript and written list of to dos to make plots
 
 
 wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
@@ -23,18 +25,58 @@ library(knitr)
 library(ggpubr)
 library(secr)
 library(wham)
+library(viridisLite)
+library(here)
 
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
-Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/5YrPlots/MSEmods_50yr.rds')
+# Uncomment this when you run, R just likes to rerun the setup chunk which kills me
+Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr.rds')
+# Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
+# Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
+# Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
+# Mods_bias4 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_4/MSEmods_50yr.rds')
+
+# mods_bias <- list(Mods_bias1, Mods_bias2, Mods_bias3, Mods_bias4)
 
 ModNames_proj <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj")
 ModNames_bias <-  c("Mod_AR1Ecov", "Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov", "Mod_NoEcov")
 ModNames_biasOMs <- c("Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov")
-assess.years <- c(2022, 2027, 2032, 2037, 2042, 2047, 2052, 2057, 2062, 2067)
-MSE_Length <- 5
+assess.years <- c(2022, 2025, 2028, 2031, 2034, 2037, 2040, 2043, 2046, 2049, 2052, 2055, 2058, 2061, 2064, 2067)
+MSE_Length <- 3
 
 seeds <- 10
+
+```
+
+```{r convergenceList, eval = FALSE}
+
+
+
+# LIST CONVERGENCE OF EACH LIST. POTENTIALLY MOVE THIS TO BEFORE SPIDER PLOTS AND DFS
+# 
+# convergence list. Fit EM twixe because two assessments in feedback period. WANT BOTH TO BE 2 OTHERWISE DISCARD ENTIRE SEED. MAKE SURE EVERY REALIZATION CONTAINS ALL EMS THAT CONVERGED. IF YOU USE AN UNCONVERGED MODEL IS NOT POSSIBLE
+
+
+# for (i in 1:length(Mods_proj)){
+#   for(j in 1:length(Mods_proj[[i]])){
+#     if(is.null(Mods_proj[[i]][[j]])){
+#       Mods_proj[[i]] <- NA
+#     }
+#   }
+# 
+# }
+# 
+# 
+# for (i in 1:length(mods_bias)){
+#   for(j in 1:length(mods_bias[[i]])){
+#     for(k in 1:length(mods_bias[[i]][[j]]))
+#     if(is.null(mods_bias[[i]][[j]][[k]])){
+#       mods_bias[[j]] <- NA
+#     }
+#   }
+#  }   
+
 
 ```
 
@@ -46,7 +88,7 @@ source('SpiderPlotFix.R')
 mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
 
 mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/5YrPlots')
+main_dir <- paste0(PlotLocations, '/NAARETest')
 main.dir <- main_dir
 output_dir <- "SpiderPlot_fix"
 sub.dir <- output_dir
@@ -113,7 +155,7 @@ FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, 
 #mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
 
 mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/5YrPlots')
+main_dir <- paste0(PlotLocations, '/NAARETest')
 main.dir <- main_dir
 output_dir <- "RadarPlot_fix"
 sub.dir <- output_dir
@@ -142,6 +184,8 @@ FIXEDplot_fbar_performance(mods, is.nsim, main_dir, output_dir, "Fbar", width, h
 source('FIXEDplot_catch_performance.R')
 FIXEDplot_catch_performance(mods, is.nsim, main_dir, output_dir, "Catch", width, height, dpi, col.opt, method, outlier.opt = NA, plot.style = "median_iqr", show.whisker = TRUE, use.n.years = 10, new_model_names)
 ```
+
+
 ``` {r MakeYearlyDF}
 
 # NOT PULLING OUT REFERERNCE POINTS. WHYYYYY
@@ -191,9 +235,7 @@ Proj_ests <- data.frame(Year = c(),
                       EM_NAA_devs = c()
                       )
 
-#mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
 mods <- Mods_proj
-
 
 # Delete non converged seeds
 for(i in 1:length(mods)){ # i = seed, j = model
@@ -206,24 +248,23 @@ for(i in 1:length(mods)){ # i = seed, j = model
     
 
   for(k in 1:length(ModNames_proj)){
-    
-    No.MSE <- length(mods[[i]][[paste0("Mod",k)]][["em_list"]])
       
-    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 6) #Year
+    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 3) #Year
     em_name <- rep(ModNames_proj[k], length(years)) # Model Name
     Seed <- rep(i, length(years))
       # Ecov_x estimates
-    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:101,1] #OM_ecov Temps
-    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:101,1] # om obs temps
-    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:101,1] #EM_ecov Temps
-    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:101,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:98,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:98,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:98,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:98,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
     # Ecov_Obs estimates
     
-    SSB_om <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]], NA) #SSB
-    SSB_em <- c(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["SSB"]], rep(NA, 6))
-    FBar_om <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1], NA) #Fbar
-    pred_catch_om <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]], NA) #pred catch
+    SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]][1:98,]  #SSB
+    SSB_em <- c(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["SSB"]], rep(NA, 3))
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1][1:98] #Fbar
+    pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]][1:98,] #pred catch
     cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]))
+    cat_advice_em <-  cat_advice_em[1:98]
     
     Ecov_beta_R_OM <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["par"]][["Ecov_beta_R"]], length(years))
     
@@ -233,17 +274,17 @@ for(i in 1:length(mods)){ # i = seed, j = model
     em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]][1], length(years))
     om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']][1], length(years))
     
-    om_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,6], NA)
+    om_naa_oldest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,6][1:98]
     om_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,6], length(years))
     
-    om_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1], NA)
+    om_naa_youngest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1][1:98]
     om_naasigma_youngest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,1], length(years))
     
-    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[No.MSE]][["NAA"]][,,,6], rep(NA, 6))
-    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[No.MSE]][["NAA"]][,,,1], rep(NA, 6))
+    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 3))
+    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 3))
     
-    om_naa_devs <- c(mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA_devs"]][1,1,,1], NA)
-    em_naa_devs <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[length(Mods_proj)]][["NAA_devs"]][1,1,,1], rep(NA,6))
+    om_naa_devs <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA_devs"]][1,1,,1][1:98]
+    em_naa_devs <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA_devs"]][1,1,,1], rep(NA,3))
     # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
     # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
     
@@ -260,13 +301,13 @@ for(i in 1:length(mods)){ # i = seed, j = model
 
         assess.no <- which(assess.years == years[q])
 
-        df_perAssessment$recPars_a[q:(q+4)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,1] # REPORTED PER ASSESSMENT
-        df_perAssessment$recPars_b[q:(q+4)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,2] # REPORTED PER ASSESSMENT
+        df_perAssessment$recPars_a[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,1] # REPORTED PER ASSESSMENT
+        df_perAssessment$recPars_b[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,2] # REPORTED PER ASSESSMENT
 
-        df_perAssessment$Ecov_beta_R_EM[q:(q+4)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["Ecov_beta_R"]]
+        df_perAssessment$Ecov_beta_R_EM[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["Ecov_beta_R"]]
         
-        df_perAssessment$em_naasigma_oldest[q:(q+4)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,6]
-        df_perAssessment$em_naasigma_youngest[q:(q+4)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,1]
+        df_perAssessment$em_naasigma_oldest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,6]
+        df_perAssessment$em_naasigma_youngest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,1]
 
 
       }}
@@ -282,7 +323,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
                       SSB_EM = SSB_em,
                       FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
                       Pred_catch = pred_catch_om,
-                      Catch_advice = cat_advice_em[1:101],
+                      Catch_advice = cat_advice_em,
                       # log_FMSY_stat = FMSY,
                       # log_SSB_FXSPR_stat = SSB_FXSPR,
                       # log_FBar_SXPR_stat = FBar_SXPR
@@ -327,21 +368,15 @@ for(i in 1:length(mods)){ # i = seed, j = model
 # }
 
 
-saveRDS(Proj_ests,'C:/Users/swulfing/Documents/MSE_results/5YrPlots/Projections_data.rds')
+saveRDS(Proj_ests,'C:/Users/swulfing/Documents/MSE_results/Combo/Projections_data.rds')
 rm('mods')
 
 ```
 
 ```{r bbmsy}
 
-
 mods <- Mods_proj
-
 # r is seed, m is em NO
-
-#mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
-mods <- Mods_proj
-MSE_Length <- 5
 
 BRP_data <- data.frame(Year = c(), # which EM comes up wiht most accurate BRP, too optimistic/too pessimistic eventual over or under exploitation. % model runs em exceeds catch goal
                       EM_name = c(),
@@ -380,14 +415,14 @@ for(r in 1:length(mods)){ # r is seed No, m is model
     model <- mods[[r]][[m]]
                       input <- model$om$input
                       input$random <- NULL
-                      
+## UNCOMMENT ONCE TESTING IS OVER                      
                       if (!is.null(input$data$FXSPR_init)) {
                         input$data$FXSPR_init[] <- 2
                       }
                       if (!is.null(input$data$FXSPR_static_init)) {
                         input$data$FXSPR_static_init[] <- 2
                       }
-                      
+
                       om_brp <- try(
                         fit_wham(input,
                                  n.newton         = 10,
@@ -447,10 +482,10 @@ for(r in 1:length(mods)){ # r is seed No, m is model
           #rep(model[["em_list"]][[16]][["log_Fbar_XSPR_static"]], length(om_brp[["years"]])) ###3
       }
       
-      # eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(NA, 2)) ### 1
-      # eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(NA, 2)) ### 1
-      # eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(NA, 2)) ### 1
-      # eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, rep(NA, 2))
+      eM_log_FMSY_static <- append(eM_log_FMSY_static, rep(NA, 2)) ### 1
+      eM_log_SSB_FXSPR_static <- append(eM_log_SSB_FXSPR_static, rep(NA, 2)) ### 1
+      eM_log_FXSPR_static <- append(eM_log_FXSPR_static, rep(NA, 2)) ### 1
+      eM_log_Fbar_XSPR_static <- append(eM_log_Fbar_XSPR_static, rep(NA, 2))
       
       data_List <- data.frame(Year = year,
                       EM_name = eM_name,
@@ -500,7 +535,7 @@ BRP_data <- BRP_data %>%
 
 
 
-saveRDS(BRP_data,'C:/Users/swulfing/Documents/MSE_results/5YrPlots/BRP_data.rds')
+saveRDS(BRP_data,'C:/Users/swulfing/Documents/MSE_results/Combo/BRP_data.rds')
 
 ```
 
@@ -545,6 +580,23 @@ ggplot(data = boxplot_test, aes(x = EM_name, y = Ecov_beta_R_EM)) +
   ylab('Calculated Ecological Covariate') +
   theme(axis.text.x=element_text(color = "black", size=11, angle=30, vjust=.8, hjust=0.8)) 
 
+```
+
+```{r timeseriesparam, fig.cap = 'Estimated ecological covariates in for the different temperature projection choices in the EM compared to the "true" value in the OM.'}
+#knitr::include_graphics("Plots/YearlyParams_proj.png")
+
+labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','Recent Trend','Recent Window','Terminal Year')
+
+paramEsts_yearprojs <- Proj_ests %>%
+  filter(EM_name != 'Mod_NoEcov') %>%
+  group_by(EM_name, Year) %>%
+  filter(Year > 2023) %>%
+  summarize(mean_OM = mean(Ecov_beta_R_OM),
+            mean_EM = mean(Ecov_beta_R_EM))
+
+ggplot(paramEsts_yearprojs, aes(x = Year, y = mean_EM, color = EM_name)) +
+  geom_line() +
+  geom_hline(yintercept = mean(paramEsts_yearprojs$mean_OM), color = 'black', linetype = 'dashed')
 ```
 
 ```{r CatchAdvice, echo = FALSE, warning = FALSE, message = FALSE}
@@ -743,3 +795,70 @@ ggplot(autoCorr, aes(x = EM, y = phi_hat_EM)) +
 
 
 ```
+
+```{r ReferencePoints, out.width="45%", fig.cap="Overfished (left) and overfishing (right) status over the projected time series for each EM. Overfished and overfishing thresholds are shown in the horizonal red line", fig.show='hold', fig.align='center', echo = FALSE, warning = FALSE, message = FALSE}
+#### NOT USING MSY AS PROXY
+# OverfishedStatus <- BRP_data %>%
+#   filter(Year >= 2024) %>%
+#   group_by(EM_name, Year) %>%
+#   summarize(OM_Overfishing = log10(mean(Overfishing_OM, na.rm = TRUE)),
+#             EM_Overfishing = log10(mean(Overfishing_EM, na.rm = TRUE)),
+#             SD_Overfishing = log10(sd(Overfishing_EM, na.rm = TRUE)),
+#             OM_Overfished = log10(mean(Overfished_OM, na.rm = TRUE)),
+#             EM_Overfished = log10(mean(Overfished_EM, na.rm = TRUE)),
+#             SD_Overfished = log10(sd(Overfished_EM, na.rm = TRUE))
+#             )
+
+OverfishedStatus <- BRP_data %>%
+  filter(Year >= 2024) %>%
+  group_by(EM_name, Year) %>%
+  summarize(OM_Overfishing = mean(Overfishing_OM, na.rm = TRUE),
+            EM_Overfishing = mean(Overfishing_EM, na.rm = TRUE),
+            SD_Overfishing = sd(Overfishing_EM, na.rm = TRUE),
+            OM_Overfished = mean(Overfished_OM, na.rm = TRUE),
+            EM_Overfished = mean(Overfished_EM, na.rm = TRUE),
+            SD_Overfished = sd(Overfished_EM, na.rm = TRUE)
+            )
+
+
+ggplot(data = OverfishedStatus, aes(x = Year, y = EM_Overfished)) +
+  geom_point(aes(y = EM_Overfished), color = 'orange') +
+  geom_point(aes(y = OM_Overfished), color = 'black') +
+  geom_hline(yintercept = 1, linetype = 'dashed', color = 'red') +
+  facet_wrap(vars(EM_name)) +
+  ylim(-5,10)
+
+ggplot(data = OverfishedStatus, aes(x = Year, y = EM_Overfishing)) +
+  geom_point(aes(y = EM_Overfishing), color = 'orange') +
+  geom_point(aes(y = OM_Overfishing), color = 'black') +
+  geom_hline(yintercept = 1, linetype = 'dashed', color = 'red') +
+  facet_wrap(vars(EM_name)) +
+  ylim(-5,10)
+
+```
+
+
+
+```{r BRPPerDiff, fig.cap = 'Percent difference of the calculated FXSPR reference point in each EM compared to the OM.', echo = FALSE, warning = FALSE, message = FALSE}
+
+BRP_calcd <- BRP_data %>%
+  filter(Year >= 2024) %>%
+  rowwise() %>%
+  mutate(BPR_PerDiff = (exp(EM_log_FXSPR_static) - exp(OM_log_FXSPR_static)) /exp(OM_log_FXSPR_static))
+
+
+
+ggplot(BRP_calcd, aes(x = EM_name, y = BPR_PerDiff)) +
+  geom_boxplot()
+
+```
+
+
+
+
+
+
+
+
+
+

@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
 wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
 setwd(wd)
 
-PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots/Combo'
-ModelLocations <- 'C:/Users/swulfing/Documents/MSE_results/Combo'
+PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots/NAARETest'
+ModelLocations <- 'C:/Users/swulfing/Documents/MSE_results/NAARETest'
 
 # devtools::install_github(
 #   "lichengxue/whamMSE",
@@ -176,7 +176,7 @@ sel3 <- list(
   model = c("age-specific", "logistic", "logistic", "logistic"),
   re    = c("ar1_y", "none", "none", "none"),
   initial_pars = list(
-    c(0.05, 0.3, 0.7, 0.875, 0.9, 1),   # fleet age-specific (fix older ages below)
+    c(0.017, 0.249, 0.751, 1, 1, 1),   # fleet age-specific (fix older ages below)
     c(2.305, 0.327),                    # index 1 logistic
     c(1.611, 0.483),                    # index 2 logistic
     c(2.135, 0.217)                     # index 3 logistic
@@ -190,15 +190,15 @@ M <- list(
   initial_means = array(c(0.57, 0.33, 0.26, 0.23, 0.22, 0.22), dim = c(n_stocks, n_regions, n_ages))
 )
 
-## 6.3 NAA process structure (rec+1 with age-specific sigma)
-sigma_vals <- array(0.5, dim = c(n_stocks, n_regions, n_ages))
-sigma_vals[,,1]    <- 0.655
-sigma_vals[,,2:6]  <- 0.720
+# ## 6.3 NAA process structure (rec+1 with age-specific sigma)
+# sigma_vals <- array(0.5, dim = c(n_stocks, n_regions, n_ages))
+# sigma_vals[,,1]    <- 0.655
+# sigma_vals[,,2:6]  <- 0.720
 
-# # SENSITIVITY TEST
-# sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
-# sigma_vals[,,1]    <- 0.2
-# sigma_vals[,,2:6]  <- 0.2
+# SENSITIVITY TEST
+sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
+sigma_vals[,,1]    <- 0.2
+sigma_vals[,,2:6]  <- 0.2
 
 
 NAA_re <- list(

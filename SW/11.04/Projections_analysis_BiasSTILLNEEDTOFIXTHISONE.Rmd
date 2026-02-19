@@ -15,7 +15,7 @@ output:
 
 
 wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW"
-knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE)
 knitr::opts_knit$set(root.dir = wd) 
 setwd(wd)
 
@@ -25,21 +25,16 @@ library(knitr)
 library(ggpubr)
 library(secr)
 library(wham)
-library(viridisLite)
-library(here)
 
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
-# Uncomment this when you run, R just likes to rerun the setup chunk which kills me
-Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
-# Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
-# Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
-# Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
-# Mods_bias4 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_4/MSEmods_50yr.rds')
+Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
+Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
+Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
+Mods_bias4 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_4/MSEmods_50yr.rds')
 
-# mods_bias <- list(Mods_bias1, Mods_bias2, Mods_bias3, Mods_bias4)
+ mods_bias <- list(Mods_bias1, Mods_bias2, Mods_bias3, Mods_bias4)
 
-ModNames_proj <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj")
 ModNames_bias <-  c("Mod_AR1Ecov", "Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov", "Mod_NoEcov")
 ModNames_biasOMs <- c("Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov")
 assess.years <- c(2022, 2025, 2028, 2031, 2034, 2037, 2040, 2043, 2046, 2049, 2052, 2055, 2058, 2061, 2064, 2067, 2070)
@@ -80,7 +75,7 @@ seeds <- 10
 
 ```
 
-```{r SpiderPlot_fix, eval = FALSE}
+```{r SpiderPlot_fix}
 source('SpiderPlotFix.R')
 
 
@@ -88,7 +83,7 @@ source('SpiderPlotFix.R')
 mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
 
 mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/Combo')
+main_dir <- paste0(PlotLocations, '/Projections')
 main.dir <- main_dir
 output_dir <- "SpiderPlot_fix"
 sub.dir <- output_dir
@@ -101,7 +96,7 @@ new_model_names <- c("AR(1)", "Historical Avg", "Recent Window", "Recent Trend",
 base.model <- "Mod_AR1Ecov"
 start.years <- 51
 use.n.years.first <- 1
-use.n.years.last <- 10
+use.n.years.last <- 3
 is.nsim <- if (!is.list(mods[[1]][[1]][[1]])) FALSE else TRUE
 method <- "median"
 
@@ -147,7 +142,7 @@ FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, 
 
 ```
 
-```{r BoxPlot_fix, eval = FALSE}
+```{r BoxPlot_fix}
 #source('FIXEDplot_ssb_performance.R')
 
 
@@ -184,7 +179,6 @@ FIXEDplot_fbar_performance(mods, is.nsim, main_dir, output_dir, "Fbar", width, h
 source('FIXEDplot_catch_performance.R')
 FIXEDplot_catch_performance(mods, is.nsim, main_dir, output_dir, "Catch", width, height, dpi, col.opt, method, outlier.opt = NA, plot.style = "median_iqr", show.whisker = TRUE, use.n.years = 10, new_model_names)
 ```
-
 
 ``` {r MakeYearlyDF}
 
@@ -235,7 +229,7 @@ Proj_ests <- data.frame(Year = c(),
                       EM_NAA_devs = c()
                       )
 
-mods <- Mods_proj
+mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
 
 # Delete non converged seeds
 for(i in 1:length(mods)){ # i = seed, j = model
@@ -372,10 +366,182 @@ rm('mods')
 
 ```
 
+```{r DFBias}
+
+# BIASES
+Bias_ests <- list(OM_1 = NULL,
+                  OM_2 = NULL,
+                  OM_3 = NULL,
+                  OM_4 = NULL)
+for(j in 1:length(ModNames_biasOMs)){
+
+ests <- data.frame(Year = c(),
+                      EM_name = c(),
+                      seed_no = c(),
+                      Temp_OM = c(),
+                      Temp_OM_Obs = c(),
+                      Temp_EM = c(),
+                      Temp_EM_Obs = c(),
+                      SSB = c(), # SSB_real
+                      FBar = c(), #f bar OM
+                      Pred_catch = c(), #Predited catch om
+                      Catch_advice = c(),  # catch Advice from EM
+                      #THESE STILL AREN'T RUNNING. WHY
+                      # log_FMSY_stat = c(), #IN LOG SPACE. TRANSFORM
+                      # log_SSB_FXSPR_stat = c(), #IN LOG SPACE. TRANSFORM
+                      # log_FBar_SXPR_stat = c() #IN LOG SPACE. TRANSFORM
+                      recPars_a = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1 # Intercept
+                      recPars_b = c(), #IN LOG SPACE. TRANSFORM ? # EM Stock Recruit Relationship 1
+                      Ecov_beta_R_OM= c(), #logitrho for ecov param
+                      Ecov_beta_R_EM = c(),
+                      OM_RecPar_A = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
+                      OM_RecPar_B = c(),#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
+                      EM_q = c(),
+                      OM_q = c(),
+                      OM_NAA_oldest = c(),
+                      OM_NAA_youngest = c(),
+                      EM_NAA_oldest = c(),
+                      EM_NAA_youngest = c(),
+                      
+                      OM_NAAsigma_oldest = c(),
+                      OM_NAAsigma_youngest = c(),
+                      EM_NAAsigma_oldest = c(),
+                      EM_NAAsigma_youngest = c()
+                   )
+
+mods <- readRDS(paste0('C:/Users/swulfing/Documents/MSE_results/Biases/OM_', j ,'/MSEmods_50yr.rds'))
+
+
+# Delete non-converged seeds
+
+for(i in 1:length(mods)){ # i = seed, j = model
+  
+  for(q in 1:length(mods[[i]])){
+    if(is.null(mods[[i]][[q]])){
+      mods[[i]] <- NA
+    }
+  }
+  
+
+#for(i in 1:length(mods)){ # i = seed, j = model
+  for(k in 1:length(ModNames_bias)){
+      
+    years <- min(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]):(max(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["years"]]) + 3) #Year
+    em_name <- rep(ModNames_bias[k], length(years)) # Model Name
+    Seed <- rep(i, length(years))
+      # Ecov_x estimates
+    om_ecovx <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Ecov_x"]][1:101,1] #OM_ecov Temps
+    om_ecovObs <- mods[[i]][[paste0("Mod",k)]][["om"]][["input"]][["data"]][["Ecov_obs"]][1:101,1] # om obs temps
+    em_ecovx <- mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["rep"]][["Ecov_x"]][1:101,1] #EM_ecov Temps
+    em_ecovObs <- mods[[i]][[paste0("Mod",k)]][["em_input"]][[1]][["data"]][["Ecov_obs"]][1:101,1] # em obs temps REPORTED PER ASSESSMENT. This one I'm not going to care about very much
+    # Ecov_Obs estimates
+    
+    SSB_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["SSB"]] #SSB
+    FBar_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["Fbar"]][,1] #Fbar
+    pred_catch_om <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["pred_catch"]] #pred catch
+    cat_advice_em <-  c(rep(NA, 51),unlist(mods[[i]][[paste0("Mod",k)]][["catch_advice"]]), NA)
+    
+    Ecov_beta_R_OM <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["par"]][["Ecov_beta_R"]], length(years))
+    
+    om_recpar_a <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
+    om_recpar_b <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['mean_rec_pars']][,1], length(years))
+    
+    em_q <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["logit_q"]][1], length(years))
+    om_q <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][['parList']][['logit_q']][1], length(years))
+    
+    om_naa_oldest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,6]
+    om_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,6], length(years))
+    
+    om_naa_youngest <- mods[[i]][[paste0("Mod",k)]][["om"]][["rep"]][["NAA"]][,,,1]
+    om_naasigma_youngest <- rep(mods[[i]][[paste0("Mod",k)]][["om"]][["parList"]][["log_NAA_sigma"]][,,1], length(years))
+    
+    em_naa_oldest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,6], rep(NA, 5))
+    em_naa_youngest <- c(mods[[i]][[paste0("Mod",k)]][["em_list"]][[16]][["NAA"]][,,,1], rep(NA, 5))
+    # em_naasigma_oldest <- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,6]],length(years))
+    # em_naasigma_youngest<- rep(mods[[i]][[paste0("Mod",k)]][["em_full"]][[1]][["parList"]][["log_NAA_sigma"]][[1,1,1]],length(years))
+    
+    
+    # RECORDING INFO THAT IS REPORTED PER ASSESSMENT YEAR
+        df_perAssessment <- data.frame(years_trace = years,
+                                   recPars_a = NA,
+                                   recPars_b = NA,
+                                   Ecov_beta_R_EM = NA,
+                                   em_naasigma_oldest = NA, 
+                                   em_naasigma_youngest = NA)
+    for(q in 1:length(years)){
+      if(years[q] %in% assess.years){
+
+        assess.no <- which(assess.years == years[q])
+
+        df_perAssessment$recPars_a[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,1] # REPORTED PER ASSESSMENT
+        df_perAssessment$recPars_b[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]]$mean_rec_pars[,2] # REPORTED PER ASSESSMENT
+
+        df_perAssessment$Ecov_beta_R_EM[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["Ecov_beta_R"]]
+        
+        df_perAssessment$em_naasigma_oldest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,6]
+        df_perAssessment$em_naasigma_youngest[q:(q+2)] <- mods[[i]][[paste0("Mod",k)]][['par.est']][[assess.no]][["log_NAA_sigma"]][,,1]
+        
+      }}
+    
+    data_List <- data.frame(Year = years,
+                      EM_name = em_name,
+                      seed_no = Seed,
+                      Temp_OM = om_ecovx,
+                      Temp_OM_Obs = om_ecovObs,
+                      Temp_EM = em_ecovx,
+                      Temp_EM_Obs = em_ecovObs,
+                      SSB = SSB_om,
+                      FBar = FBar_om, #AGE SPECIFIC. ONLY DOING OLDEST AGE GROUP OFR F BAR
+                      Pred_catch = pred_catch_om,
+                      Catch_advice = cat_advice_em[1:101],
+                      # log_FMSY_stat = FMSY,
+                      # log_SSB_FXSPR_stat = SSB_FXSPR,
+                      # log_FBar_SXPR_stat = FBar_SXPR
+                      EM_recPars_a = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
+                      EM_recPars_b = df_perAssessment$recPars_a, #IN LOG SPACE. TRANSFORM? # est stock recruit relationship
+                      Ecov_beta_R_OM = Ecov_beta_R_OM,#IN LOG SPACE. TRANSFORM?
+                      Ecov_beta_R_EM = df_perAssessment$Ecov_beta_R_EM,
+                      OM_RecPar_A = om_recpar_a,#IN LOG SPACE. TRANSFORM # Real stock recruit relationship
+                      OM_RecPar_B = om_recpar_b,
+                      EM_q = em_q,
+                      OM_q = om_q,
+                      OM_NAA_oldest = om_naa_oldest,
+                      OM_NAA_youngest = om_naa_youngest,
+                      EM_NAA_oldest = em_naa_oldest,
+                      EM_NAA_youngest = em_naa_youngest,
+                      
+                      OM_NAAsigma_oldest = om_naasigma_oldest,
+                      OM_NAAsigma_youngest = om_naasigma_youngest,
+                      EM_NAAsigma_oldest = df_perAssessment$em_naasigma_oldest,
+                      EM_NAAsigma_youngest = df_perAssessment$em_naasigma_youngest
+                      )
+    
+    ests <- rbind(ests, data_List)
+    
+  }
+  }
+Bias_ests[[j]] <- ests
+}
+
+saveRDS(Bias_ests,'C:/Users/swulfing/Documents/MSE_results/Biases/Biases_data.rds')
+rm('mods')
+
+# Possible other things to include:
+  # mod1$em_list[[1]]$SSB - mod1$om$rep$SSB[1:50] # this saves all em results. Will contain estimate management quantities. A comparison of ests vs reality
+  # # Reference poitns
+    # exp(mod1$om$rep$log_FXSPR_static) # real brp in OM
+    # exp(mod1$em_list[[1]]$log_FXSPR_static) # estimated brp in EM
+# NAA VARIATION OF NAA - Cheng says this is recruitment variation
+    # exp(mod1$om$parList$log_NAA_sigma) # overestimating variaion of recruitment
+    # exp(mod1$par.est[[1]]$log_NAA_sigma)
+# Do I want NAA
+```
+
 ```{r bbmsy}
 
-mods <- Mods_proj
 # r is seed, m is em NO
+
+mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/Combo/MSEmods_50yr.rds')
 
 BRP_data <- data.frame(Year = c(), # which EM comes up wiht most accurate BRP, too optimistic/too pessimistic eventual over or under exploitation. % model runs em exceeds catch goal
                       EM_name = c(),
@@ -534,321 +700,286 @@ BRP_data <- BRP_data %>%
 
 
 
-saveRDS(BRP_data,'C:/Users/swulfing/Documents/MSE_results/Combo/BRP_data.rds')
+saveRDS(BRP_data,'C:/Users/swulfing/Documents/MSE_results/BRP_data.rds')
 
 ```
 
 ```{r paramEsts}
+# MAKE A TABLE OF THE PARAMETER ESTIMATES
+#Proj_ests <- as.data.frame(Proj_ests)
+
 # PROJECTIONS
 paramEsts_projs <- Proj_ests %>%
-  filter(EM_name != 'Mod_NoEcov') %>%
   group_by(EM_name) %>%
-  summarize(OM_ecov = round(mean(Ecov_beta_R_OM, na.rm = TRUE), digits = 3),
-          mean_ecov = round(mean(Ecov_beta_R_EM, na.rm = TRUE), digits = 3),
-          sd_ecov = round(sd(Ecov_beta_R_EM, na.rm = TRUE), digits = 3)) %>%
-    rowwise() %>%
-    mutate(PercentChange = ((mean_ecov - OM_ecov)/OM_ecov) * 100) %>%
-  select(EM_name, OM_ecov, mean_ecov, PercentChange, sd_ecov) %>%
-  mutate(EM_name = case_when(
-    EM_name == 'Mod_AR1Ecov' ~ 'AR(1)',
-    EM_name == 'Mod_BadProj' ~'Bad Projection',
-    EM_name == 'Mod_GoodProj' ~'Good Projection',
-    EM_name == 'Mod_HistAvgEcov' ~'Historical Average',
-    EM_name == 'Mod_RecTrendEcov' ~'Recent Trend',
-    EM_name == 'Mod_RecWindEcov' ~'Recent Window',
-    EM_name == 'Mod_TermYear' ~'Terminal Year'
-  ))
+  summarize(mean_ecov = mean(Ecov_processPars_mean_assessment, na.rm =TRUE),
+          sd_ecov = mean(Ecov_processPars_sd_assessment, na.rm =TRUE),
+          logit_rho = mean(Ecov_processPars_rho_assessment, na.rm =TRUE))
 
 #Ecov_processPars_mean
 
-paramEsts_projs$PercentChange <- round(paramEsts_projs$PercentChange, digits = 3)
-
-colnames(paramEsts_projs) <- c('EM Name','OM Ecov','Mean Ecov','Percent Change', 'Ecov Standard Dev.')
-
-kable(paramEsts_projs, caption = 'Ecov parameter estimates, standard deviation, and rho for each EM for projection')
+kable(paramEsts_projs, caption = 'Ecov parameter estimates, sd, and logit_rho for each EM for projections test')
 
 
-boxplot_test <- Proj_ests %>%
-  filter(EM_name != 'Mod_NoEcov')
+# BIASES
+meanTable_bias <- data.frame(EM_name = ModNames_bias)
+sdTable_bias <- data.frame(EM_name = ModNames_bias)
+logitrhoTable_bias <- data.frame(EM_name = ModNames_bias)
 
-ggplot(data = boxplot_test, aes(x = EM_name, y = Ecov_beta_R_EM)) +
-  geom_boxplot() +
-  geom_hline(yintercept = -0.3969783, color = 'red', linetype = 'dashed') +
-  scale_x_discrete(labels= c('AR(1)','Bad Projection','Good Projection','Historical Average','Recent Trend','Recent Window','Terminal Year')) +
-  xlab('Projection') +
-  ylab('Calculated Ecological Covariate') +
-  theme(axis.text.x=element_text(color = "black", size=11, angle=30, vjust=.8, hjust=0.8)) 
+for(i in 1:4){
+  data_use <- Bias_ests[[i]]
+  
+  #mean
+  data_clean <- data_use %>%
+  group_by(EM_name) %>%
+  summarize(ecov_mean = mean(Ecov_processPars_mean_assessment))
+  
+  colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
+  
+  meanTable_bias <- merge(meanTable_bias, data_clean, by = 'EM_name')
 
-```
-
-```{r timeseriesparam, fig.cap = 'Estimated ecological covariates in for the different temperature projection choices in the EM compared to the "true" value in the OM.'}
-#knitr::include_graphics("Plots/YearlyParams_proj.png")
-
-labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','Recent Trend','Recent Window','Terminal Year')
-
-paramEsts_yearprojs <- Proj_ests %>%
-  filter(EM_name != 'Mod_NoEcov') %>%
-  group_by(EM_name, Year) %>%
-  filter(Year > 2023) %>%
-  summarize(mean_OM = mean(Ecov_beta_R_OM),
-            mean_EM = mean(Ecov_beta_R_EM))
-
-ggplot(paramEsts_yearprojs, aes(x = Year, y = mean_EM, color = EM_name)) +
-  geom_line() +
-  geom_hline(yintercept = mean(paramEsts_yearprojs$mean_OM), color = 'black', linetype = 'dashed')
-```
-
-```{r CatchAdvice, echo = FALSE, warning = FALSE, message = FALSE}
-library(scales)
-p <- list()
-
-catchAdvice_projs <- Proj_ests %>%
-  #filter(Year >= 2024) %>%
-  group_by(EM_name, Year) %>%
-  summarize(mean_catchAdvice = mean(Catch_advice),
-          sd_catchAdvice = sd(Catch_advice),
-          mean_SSB = mean(SSB),
-          sd_SSB = sd(SSB),
-          mean_FBar = mean(FBar),
-          sd_FBar = sd(FBar),
-          mean_Pred_catch = mean(Pred_catch),
-          sd_Pred_catch = sd(Pred_catch))
-
-
-
-ggplot(data = catchAdvice_projs, aes(x = Year, y = mean_catchAdvice, group = EM_name, color = EM_name)) +
-  #geom_ribbon(aes(ymin = mean_catchAdvice - sd_catchAdvice, ymax = mean_catchAdvice + sd_catchAdvice, fill = EM_name), alpha = 0.2) +
-    geom_line() +
-  ylab('Mean Catch Advice (kmt)') +
-  scale_color_discrete(name = "EM",
-                       labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','No Ecov','Recent Trend','Recent Window','Terminal Year')) +
-  scale_y_continuous(labels = scales::comma) +
-  xlim(2022,2072)
-  # scale_y_continuous(labels = scales::label_number_si())
-
-```
-
-```{r SSB, echo = FALSE, warning = FALSE, message = FALSE}
-
-ggplot(data = catchAdvice_projs, aes(x = Year, y = mean_SSB, group = EM_name, color = EM_name)) +
-  #geom_ribbon(aes(ymin = mean_SSB - sd_SSB, ymax = mean_SSB + sd_SSB, fill = EM_name), alpha = 0.2) +
-    geom_line() +
-  ylab('Mean SSB (kmt)') +
-  scale_color_discrete(name = "EM",
-                       labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','No Ecov','Recent Trend','Recent Window','Terminal Year')) +
-  scale_y_continuous(labels = scales::comma)
-
-```
-
-```{r FBar, echo = FALSE, warning = FALSE, message = FALSE}
-
-ggplot(data = catchAdvice_projs, aes(x = Year, y = mean_FBar, group = EM_name, color = EM_name)) +
-  #geom_ribbon(aes(ymin = mean_FBar - sd_cFBar, ymax = mean_FBar + sd_FBar, fill = EM_name), alpha = 0.2) +
-    geom_line() +
-  ylab('Mean Fbar') +
-  scale_color_discrete(name = "EM",
-                       labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','No Ecov','Recent Trend','Recent Window','Terminal Year'))
-
-
-```
-
-```{r PredCatch, echo = FALSE, warning = FALSE, message = FALSE}
-ggplot(data = catchAdvice_projs, aes(x = Year, y = mean_Pred_catch, group = EM_name, color = EM_name)) +
-  #geom_ribbon(aes(ymin = mean_mean_Pred_catch - mean_Pred_catch, ymax = mean_mean_Pred_catch + sd_mean_Pred_catch, fill = EM_name), alpha = 0.2) +
-    geom_line() +
-  ylab('Mean Predicted Catch (kmt)') +
-  scale_color_discrete(name = "EM",
-                       labels = c('AR(1)','Bad Projection','Good Projection','Historical Average','No Ecov','Recent Trend','Recent Window','Terminal Year')) +
-  scale_y_continuous(labels = scales::comma)
-
-```
-
-```{r timeseriesrecruit, fig.cap = 'Percent difference of the calcualted recruitment per assessment year in each EM compared to the OM.', echo = FALSE, warning = FALSE, message = FALSE}
-#knitr::include_graphics("Plots/YearlyParams_proj.png")
-
-paramEsts_yearprojs <- Proj_ests %>%
-  filter(EM_name != 'Mod_NoEcov') %>%
-  group_by(EM_name, Year) %>%
-  filter(Year > 2023) %>%
-  summarize(mean_OM = mean(OM_NAA_youngest),
-            mean_EM = mean(EM_NAA_youngest)) %>%
-  mutate(percentDiff = (mean_EM - mean_OM)/ mean_OM)
-
-om_recruit <- paramEsts_yearprojs %>%
-  group_by(Year) %>%
-  summarize(mean = mean(mean_OM),
-            sd = sd(mean_OM))
-
-ggplot(paramEsts_yearprojs, aes(x = Year, y = percentDiff, color = EM_name)) +
-  geom_line() +
-  # geom_line(paramEsts_yearprojs, aes(x = Year, y = mean_EM, color = EM_name)) +
-  # geom_line(om_recruit, aes(x = om_recruit$Year, y = om_recruit$mean, color = 'black'))
-  geom_hline(yintercept = 0, color = 'black', linetype = 'dashed')
-```
-
-```{r recruitmentDevs, fig.cap = 'Percent of recruitment deviation EXPLAINED BY THE ECOV IN EACH  MODEL. MAKE SURE YOU CHANGE YOUR RESULTS PARAGRAPHS TO SAY THIS. ALSO FIX THIS BASED ON CHENG EMAIL', echo = FALSE, warning = FALSE, message = FALSE}
-
-data_recruit <- Proj_ests %>%
-  select(Year, EM_name, seed_no, EM_NAAsigma_youngest) %>%
-  filter(EM_name != 'Mod_NoEcov', Year > 2021)
-
-data_recruit$EM_NAAsigma_youngest <- exp(data_recruit$EM_NAAsigma_youngest)
-
-data_ecovNone <- Proj_ests %>%
-  select(Year, EM_name, seed_no, EM_NAAsigma_youngest) %>%
-  filter(EM_name == 'Mod_NoEcov', Year > 2021) %>%
-  select(Year, seed_no, EM_NAAsigma_youngest)
-colnames(data_ecovNone) <- c('Year', 'seed_no', 'recDevs_noEcov')
-
-data_ecovNone$recDevs_noEcov <- exp(data_ecovNone$recDevs_noEcov)
-
-
-recruitmentDevs <- merge(data_recruit, data_ecovNone, all.x = TRUE, by = c('Year', 'seed_no'))
-recruitmentDevs <- recruitmentDevs %>%
-  rowwise() %>%
-  mutate(percentEcov = (EM_NAAsigma_youngest*100) / recDevs_noEcov)
-  # mutate(percentDiff = (EM_NAAsigma_youngest - recDevs_noEcov)/recDevs_noEcov) %>%
-  # mutate(percentEcov = 1 - (EM_NAAsigma_youngest / recDevs_noEcov))
-
-idk <- recruitmentDevs %>%
-  group_by(EM_name, seed_no) %>%
-  summarize(mean = mean(percentEcov, na.rm = TRUE))
-
-# meanDevs <- recruitmentDevs %>%
-#   group_by(Year, EM_name) %>%
-#   summarise(mean = mean(percentDiff))
-
-
-ggplot(idk, aes(x = EM_name, y = mean)) +
-  geom_boxplot() +
-  xlab('EM') +
-  ylab('Percent of recruitment deviation explained by ecov') +
-  scale_x_discrete(labels= c('AR(1)','Bad Projection','Good Projection','Historical Average','Recent Trend','Recent Window','Terminal Year')) +
-  theme(axis.text.x=element_text(color = "black", size=11, angle=30, vjust=.8, hjust=0.8)) 
-
-```
-
-```{r AutoCorrRecruitment, fig.cap = 'AutoCorrelation In Recruitment', echo = FALSE, warning = FALSE, message = FALSE}
-
-
-autoTest <- Proj_ests %>%
-  select(Year, EM_name, seed_no, OM_NAA_devs, EM_NAA_devs)
-
-ems <- unique(autoTest$EM_name)
-seeds <- unique(autoTest$seed_no)
-
-autoCorr <- data.frame(EM = c(),
-                       seed = c(),
-                       pval_OM = c(),
-                       phi_hat_OM = c(),
-                       pval_EM = c(),
-                       phi_hat_EM = c()
-                       )
-
-for(i in 1:length(ems)){
-  for(j in 1:length(seeds)){
-    
-    useData <- autoTest %>%
-      filter(EM_name == ems[i] & seed_no == seeds[j])
-    
-    x_EM <- useData$EM_NAA_devs
-    x_OM <- useData$OM_NAA_devs
-    
-    fit_OM <- lm(x_OM[-1] ~ x_OM[-length(x_OM)] - 1)  # AR(1) through origin
-    summary(fit_OM) # should have p > 0.05 indicating there's no AR1 autocorrelation, meaning very likely to be IID
-    
-    fit_EM <- lm(x_EM[-1] ~ x_EM[-length(x_EM)] - 1)  # AR(1) through origin
-    summary(fit_EM) # should have p > 0.05 indicating there's no AR1 autocorrelation, meaning very likely to be IID
-    
-    data_List <- data.frame(
-      EM = ems[i],
-      seed = seeds[j],
-      pval_OM = summary(fit_OM)$coefficients[, "Pr(>|t|)"],#coef(fit_OM)[4],
-      phi_hat_OM = coef(fit_OM)[1], #phi_hat # Should be near 0 if you define NAA for age 1 to be IID in your model
-      pval_EM = summary(fit_EM)$coefficients[, "Pr(>|t|)"],#coef(fit_EM)[4],
-      phi_hat_EM = coef(fit_EM)[1]
-    #phi_hat # Should be near 0 if you define NAA for age 1 to be IID in your model
-    )
-    
-     autoCorr <- rbind(autoCorr, data_List)
-  }
+  #sd
+  data_clean <- data_use %>%
+  group_by(EM_name) %>%
+  summarize(ecov_mean = mean(Ecov_processPars_sd_assessment))
+  
+  colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
+  
+  sdTable_bias <- merge(sdTable_bias, data_clean, by = 'EM_name')
+  
+  #logit_rho
+  data_clean <- data_use %>%
+  group_by(EM_name) %>%
+  summarize(ecov_mean = mean(Ecov_processPars_rho_assessment))
+  
+  colnames(data_clean) <- c('EM_name', names(Bias_ests[i]) )
+  
+  logitrhoTable_bias <- merge(logitrhoTable_bias, data_clean, by = 'EM_name')
 }
 
 
-ggplot(autoCorr, aes(x = EM, y = pval_OM)) + #Line means p >0.05, meaining no AR1 autoCor, most likely IID
-  geom_boxplot() +
-  geom_hline(yintercept = 0.05)
 
-ggplot(autoCorr, aes(x = EM, y = pval_EM)) + #Line means p >0.05, meaining no AR1 autoCor, most likely IID
-  geom_boxplot() +
-  geom_hline(yintercept = 0.05)
+#Ecov_processPars_mean
 
+kable(paramEsts_projs, caption = 'Ecov parameter estimates, sd, and logit_rho for each EM for projections test')
 
-ggplot(autoCorr, aes(x = EM, y = phi_hat_OM)) + #Line means phi hat near 0 meaning NAA is IID 
-  geom_boxplot() +
-  geom_hline(yintercept = 0)
+kable(meanTable_bias, caption = 'mean ecov parameter estimates, or each EM and OM for bias test')
 
-ggplot(autoCorr, aes(x = EM, y = phi_hat_EM)) +
-  geom_boxplot() +
-  geom_hline(yintercept = 0)
+kable(sdTable_bias, caption = 'mean sd estimates, or each EM and OM for bias test')
 
+kable(logitrhoTable_bias, caption = 'logit rho parameter estimates, or each EM and OM for bias test')
 
 ```
 
-```{r ReferencePoints, out.width="45%", fig.cap="Overfished (left) and overfishing (right) status over the projected time series for each EM. Overfished and overfishing thresholds are shown in the horizonal red line", fig.show='hold', fig.align='center', echo = FALSE, warning = FALSE, message = FALSE}
-#### NOT USING MSY AS PROXY
-# OverfishedStatus <- BRP_data %>%
-#   filter(Year >= 2024) %>%
-#   group_by(EM_name, Year) %>%
-#   summarize(OM_Overfishing = log10(mean(Overfishing_OM, na.rm = TRUE)),
-#             EM_Overfishing = log10(mean(Overfishing_EM, na.rm = TRUE)),
-#             SD_Overfishing = log10(sd(Overfishing_EM, na.rm = TRUE)),
-#             OM_Overfished = log10(mean(Overfished_OM, na.rm = TRUE)),
-#             EM_Overfished = log10(mean(Overfished_EM, na.rm = TRUE)),
-#             SD_Overfished = log10(sd(Overfished_EM, na.rm = TRUE))
-#             )
+```{r catchAdvice}
 
-OverfishedStatus <- BRP_data %>%
+# resulting catch advice
+
+catchAdvice_projs <- Proj_ests %>%
   filter(Year >= 2024) %>%
   group_by(EM_name, Year) %>%
-  summarize(OM_Overfishing = mean(Overfishing_OM, na.rm = TRUE),
-            EM_Overfishing = mean(Overfishing_EM, na.rm = TRUE),
-            SD_Overfishing = sd(Overfishing_EM, na.rm = TRUE),
-            OM_Overfished = mean(Overfished_OM, na.rm = TRUE),
-            EM_Overfished = mean(Overfished_EM, na.rm = TRUE),
-            SD_Overfished = sd(Overfished_EM, na.rm = TRUE)
-            )
+  summarize(mean_catchAdvice = mean(Catch_advice),
+          sd_catchAdvice = sd(Catch_advice))
+
+ggplot(data = catchAdvice_projs, aes(x = Year, y = mean_catchAdvice, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_catchAdvice - sd_catchAdvice, ymax = mean_catchAdvice + sd_catchAdvice, fill = EM_name), alpha = 0.2) +
+  geom_line()
 
 
-ggplot(data = OverfishedStatus, aes(x = Year, y = EM_Overfished)) +
-  geom_point(aes(y = EM_Overfished), color = 'orange') +
-  geom_point(aes(y = OM_Overfished), color = 'black') +
-  geom_hline(yintercept = 1, linetype = 'dashed', color = 'red') +
-  facet_wrap(vars(EM_name)) +
-  ylim(-5,10)
+# Biases
+catchAdvice_plots <- list()
+for(i in 1:4){
+  data_use <- Bias_ests[[i]]
+  
+  data_clean <- data_use %>%
+  filter(Year >= 2024) %>%
+  group_by(EM_name, Year) %>%
+  summarize(mean_catchAdvice = mean(Catch_advice),
+          sd_catchAdvice = sd(Catch_advice))
+  
+  catchAdvice_plots[[i]] <- 
+    ggplot(data = data_clean, aes(x = Year, y = mean_catchAdvice, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_catchAdvice - sd_catchAdvice, ymax = mean_catchAdvice + sd_catchAdvice, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ggtitle(names(Bias_ests[i])) +
+  ylab ("Catch Advice") +
+  theme(legend.position  = 'none')
+  
+}
 
-ggplot(data = OverfishedStatus, aes(x = Year, y = EM_Overfishing)) +
-  geom_point(aes(y = EM_Overfishing), color = 'orange') +
-  geom_point(aes(y = OM_Overfishing), color = 'black') +
-  geom_hline(yintercept = 1, linetype = 'dashed', color = 'red') +
-  facet_wrap(vars(EM_name)) +
-  ylim(-5,10)
+ggarrange(catchAdvice_plots[[1]], catchAdvice_plots[[2]], catchAdvice_plots[[3]], catchAdvice_plots[[4]], ncol = 2, nrow = 2, common.legend = TRUE, legend = 'right')
 
 ```
 
+```{r catchSSBFbar_proj}
 
-
-```{r BRPPerDiff, fig.cap = 'Percent difference of the calculated FXSPR reference point in each EM compared to the OM.', echo = FALSE, warning = FALSE, message = FALSE}
-
-BRP_calcd <- BRP_data %>%
+paramEsts_projs <- Proj_ests %>%
   filter(Year >= 2024) %>%
+  group_by(EM_name, Year) %>%
+  summarize(mean_catch = mean(Pred_catch),
+          sd_catch = sd(Pred_catch),
+          mean_SSB = mean(SSB),
+          sd_SSB = sd(SSB),
+          mean_FBar = mean(FBar) ,
+          sd_FBar = sd(FBar))
+
+p_catch <- ggplot(data = paramEsts_projs, aes(x = Year, y = mean_catch, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_catch - sd_catch, ymax = mean_catch + sd_catch, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("Predicted Catch") +
+  theme(legend.position  = 'none')
+
+p_SSB <- ggplot(data = paramEsts_projs, aes(x = Year, y = mean_SSB, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_SSB - sd_SSB, ymax = mean_SSB + sd_SSB, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("SSB") +
+  theme(legend.position  = 'none')
+
+p_FBar <- ggplot(data = paramEsts_projs, aes(x = Year, y = mean_FBar, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_FBar - sd_FBar, ymax = mean_FBar + sd_FBar, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("FBar") +
+  theme(legend.position  = 'none')
+
+
+ggarrange(p_catch, p_SSB, p_FBar, ncol = 2, nrow = 2, common.legend = TRUE, legend = 'right')
+
+```
+
+```{r catchSSBFbar_bias}
+
+for(i in 1:4){
+  data_use <- Bias_ests[[i]]
+
+paramEsts_bias <- data_use %>%
+  filter(Year >= 2024) %>%
+  group_by(EM_name, Year) %>%
+  summarize(mean_catch = mean(Pred_catch),
+          sd_catch = sd(Pred_catch),
+          mean_SSB = mean(SSB),
+          sd_SSB = sd(SSB),
+          mean_FBar = mean(FBar) ,
+          sd_FBar = sd(FBar))
+
+p_catch <- ggplot(data = paramEsts_bias, aes(x = Year, y = mean_catch, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_catch - sd_catch, ymax = mean_catch + sd_catch, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("Predicted Catch") +
+  theme(legend.position  = 'none')
+
+p_SSB <- ggplot(data = paramEsts_bias, aes(x = Year, y = mean_SSB, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_SSB - sd_SSB, ymax = mean_SSB + sd_SSB, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("SSB") +
+  theme(legend.position  = 'none')
+
+p_FBar <- ggplot(data = paramEsts_bias, aes(x = Year, y = mean_FBar, group = EM_name, color = EM_name)) +
+  geom_ribbon(aes(ymin = mean_FBar - sd_FBar, ymax = mean_FBar + sd_FBar, fill = EM_name), alpha = 0.2) +
+  geom_line() +
+  ylab ("FBar") +
+  theme(legend.position  = 'none')
+
+
+plots <- ggarrange(p_catch, p_SSB, p_FBar, ncol = 2, nrow = 2, common.legend = TRUE, legend = 'right')
+#ModNames_biasOMs
+final_figure <- annotate_figure(plots, 
+                                top = text_grob(paste0(names(Bias_ests[i]), ': ', ModNames_biasOMs[i])))
+
+# Display the final figure
+print(final_figure)
+} #names(Bias_ests[i])
+```
+
+```{r recruitDiff_proj}
+
+# differences in recruitment ests
+# NOTE: RIGHT NOW THIS IS AN ANALYSIS OF % DIFFERENCE BETWEEN NAA6 PREDICTED AND NAA IN THE OM
+
+NAA_diff_proj <- Proj_ests %>%
+  select(Year, EM_name, seed_no, OM_NAA_oldest, EM_PredNAA_oldest) %>%
   rowwise() %>%
-  mutate(BPR_PerDiff = (exp(EM_log_FXSPR_static) - exp(OM_log_FXSPR_static)) /exp(OM_log_FXSPR_static))
+  mutate(perDiff = (EM_PredNAA_oldest - OM_NAA_oldest)/OM_NAA_oldest) %>%
+  group_by(EM_name, Year) %>%
+  summarize(meanPerDiff = mean(perDiff),
+            sdPerDiff = sd(perDiff))
 
+p <- list()
 
+for(i in 1:length(ModNames_proj )){
+  data <- NAA_diff_proj %>%
+    filter(EM_name == ModNames_proj[i])
+  
+  p[[i]] <- ggplot(data = data, aes(x = Year, y = meanPerDiff)) +
+  geom_ribbon(aes(ymin = meanPerDiff - sdPerDiff, ymax = meanPerDiff + sdPerDiff), alpha = 0.2) +
+  geom_line() +
+  ggtitle(ModNames_proj[i]) +
+  ylab ("Predicted NAA 6") +
+  theme(legend.position  = 'none')
+}
 
-ggplot(BRP_calcd, aes(x = EM_name, y = BPR_PerDiff)) +
-  geom_boxplot()
+ggarrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], p[[6]], ncol = 2, nrow = 3, common.legend = TRUE)
+
+avgChange_proj <- NAA_diff_proj %>%
+  group_by(EM_name) %>%
+  summarize(meanDiff = mean(meanPerDiff, na.rm = TRUE),
+            sdDiff = sd(meanPerDiff, na.rm = TRUE))
+
+ggplot(avgChange_proj) +
+  geom_bar( aes(x=EM_name, y=meanDiff), stat="identity") +
+   geom_errorbar( aes(x=EM_name, ymin = meanDiff - sdDiff, ymax = meanDiff + sdDiff))
+
+```
+
+```{r recruitDiff_bias}
+
+for(j in 1:4){
+  data_use <- Bias_ests[[j]]
+
+# differences in recruitment ests
+# NOTE: RIGHT NOW THIS IS AN ANALYSIS OF % DIFFERENCE BETWEEN NAA6 PREDICTED AND NAA IN THE OM
+
+NAA_diff_bias <- data_use %>%
+  select(Year, EM_name, seed_no, OM_NAA_oldest, EM_PredNAA_oldest) %>%
+  rowwise() %>%
+  mutate(perDiff = (EM_PredNAA_oldest - OM_NAA_oldest)/OM_NAA_oldest) %>%
+  group_by(EM_name, Year) %>%
+  summarize(meanPerDiff = mean(perDiff),
+            sdPerDiff = sd(perDiff))
+
+p <- list()
+
+for(i in 1:length(ModNames_bias )){
+  data <- NAA_diff_bias %>%
+    filter(EM_name == ModNames_bias[i])
+  
+  p[[i]] <- ggplot(data = data, aes(x = Year, y = meanPerDiff)) +
+  geom_ribbon(aes(ymin = meanPerDiff - sdPerDiff, ymax = meanPerDiff + sdPerDiff), alpha = 0.2) +
+  geom_line() +
+  ggtitle(ModNames_bias[i]) +
+  ylab ("Predicted NAA 6") +
+  theme(legend.position  = 'none')
+}
+
+plots <- ggarrange(p[[1]], p[[2]], p[[3]], p[[4]], p[[5]], p[[6]], ncol = 2, nrow = 3, common.legend = TRUE, legend = 'right')
+
+# plots <- ggarrange(p_catch, p_SSB, p_FBar, ncol = 2, nrow = 2, common.legend = TRUE, legend = 'right')
+#ModNames_biasOMs
+final_figure <- annotate_figure(plots, 
+                                top = text_grob(paste0(names(Bias_ests[j]), ': ', ModNames_biasOMs[j])))
+
+# Display the final figure
+print(final_figure)
+
+avgChange_bias <- NAA_diff_bias %>%
+  group_by(EM_name) %>%
+  summarize(meanDiff = mean(meanPerDiff, na.rm = TRUE),
+            sdDiff = sd(meanPerDiff, na.rm = TRUE))
+
+barplot <- ggplot(avgChange_bias) +
+  geom_bar( aes(x=EM_name, y=meanDiff), stat="identity") +
+   geom_errorbar( aes(x=EM_name, ymin = meanDiff - sdDiff, ymax = meanDiff + sdDiff))
+
+print(barplot)
+}
 
 ```
 

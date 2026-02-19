@@ -176,7 +176,7 @@ sel3 <- list(
   model = c("age-specific", "logistic", "logistic", "logistic"),
   re    = c("ar1_y", "none", "none", "none"),
   initial_pars = list(
-    c(0.017, 0.249, 0.751, 1, 1, 1),   # fleet age-specific (fix older ages below)
+    c(0.05, 0.3, 0.7, 0.875, 0.9, 1),   # fleet age-specific (fix older ages below)
     c(2.305, 0.327),                    # index 1 logistic
     c(1.611, 0.483),                    # index 2 logistic
     c(2.135, 0.217)                     # index 3 logistic
@@ -195,10 +195,15 @@ M <- list(
 # sigma_vals[,,1]    <- 0.655
 # sigma_vals[,,2:6]  <- 0.720
 
+# # SENSITIVITY TEST
+# sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
+# sigma_vals[,,1]    <- 0.2
+# sigma_vals[,,2:6]  <- 0.2
+
 # SENSITIVITY TEST
 sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
-sigma_vals[,,1]    <- 0.2
-sigma_vals[,,2:6]  <- 0.2
+sigma_vals[,,1]    <- 0.655
+sigma_vals[,,2:6]  <- 0.
 
 
 NAA_re <- list(
@@ -1056,7 +1061,7 @@ mods <- lapply(nsim, function(r) {
 saveRDS(mods, file = paste0(ModelLocations,"/MSEmods_50yr.rds"))
 
 
-#mods <- readRDS("C:/Users/swulfing/Documents/MSE_results/MSEmods_50yr.rds")
+mods <- readRDS("C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr.rds")
 
 library(ggridges)
 plot_mse_output(mods,
