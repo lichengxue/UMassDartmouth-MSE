@@ -1,0 +1,10 @@
+dos2unix SHELLSCRIPT.sh
+sbatch 	SHELLSCRIPT.sh
+
+03.03
+NAAre: 53161220
+5Yr: 53161502
+5 YR SENSE 53173803
+BIAS TESTS:
+	LOW: 53173966
+	MEDLOW: Cut me out again due to size restrictions of queue

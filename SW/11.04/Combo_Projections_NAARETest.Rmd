@@ -203,7 +203,7 @@ M <- list(
 # SENSITIVITY TEST
 sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
 sigma_vals[,,1]    <- 0.655
-sigma_vals[,,2:6]  <- 0.
+sigma_vals[,,2:6]  <- 0.2
 
 
 NAA_re <- list(
@@ -1060,8 +1060,10 @@ mods <- lapply(nsim, function(r) {
 
 saveRDS(mods, file = paste0(ModelLocations,"/MSEmods_50yr.rds"))
 
-
+# MSEmods_50yr_Test1
 mods <- readRDS("C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr.rds")
+
+# mods <- readRDS("C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr_Test3.rds")
 
 library(ggridges)
 plot_mse_output(mods,

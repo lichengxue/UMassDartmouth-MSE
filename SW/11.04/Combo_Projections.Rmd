@@ -57,7 +57,7 @@ n_seasons     <- 1L
 
 year_start    <- 1973L                                          # first assessment year in data
 year_end      <- 2022L                                          # last assessment year in data (50 yrs total)
-MSE_years     <- 50L                                             # projection/feedback years for MSE
+MSE_years     <- 51L                                             # projection/feedback years for MSE
 n_proj_years  <- (year_end - year_start + 1L) + MSE_years       # If 6 yr MSE: 50 + 6 = 56, but Ecov uses lag year so 57 rows later
 
 base.years    <- year_start:year_end                             # c(1973,...,2022)
@@ -68,10 +68,10 @@ assess.years  <- seq(tail(base.years,1), year_end + MSE_years - assess.interval,
 ## 7.1 Base Ecov list (template)
 ecov_om <- list(
   label = "bt_temp",
-  mean  = as.matrix(c(env.dat_me$bt_temp, rep(NA_real_, 51))),   # fill future later
+  mean  = as.matrix(c(env.dat_me$bt_temp, rep(NA_real_, 52))),   # fill future later
   logsigma = "est_1",
-  year  = 1972:2072,                                            # includes 1-lag year (1972) + 1973–2028
-  use_obs = matrix(1, ncol = 1, nrow = 101),                     # observed everywhere (we may override in MSE)
+  year  = 1972:2073,                                            # includes 1-lag year (1972) + 1973–2028
+  use_obs = matrix(1, ncol = 1, nrow = 102),                     # observed everywhere (we may override in MSE)
   process_model = "ar1",
   recruitment_how = matrix("controlling-lag-1-linear")
 )
@@ -177,9 +177,9 @@ sel3 <- list(
   re    = c("ar1_y", "none", "none", "none"),
   initial_pars = list(
     c(0.05, 0.3, 0.7, 0.875, 0.9, 1),   # fleet age-specific (fix older ages below)
-    c(2.388, 0.337),                    # index 1 logistic
-    c(1.715, 0.525),                    # index 2 logistic
-    c(2.149, 0.218)                     # index 3 logistic
+    c(2.313, 0.328),                    # index 1 logistic
+    c(1.62, 0.483),                    # index 2 logistic
+    c(2.144, 0.217)                     # index 3 logistic
   ),
   fix_pars = list(c(6), NULL, NULL, NULL) # fix ages 4–6 at 1 for fleet selectivity
 )
@@ -230,7 +230,7 @@ NAA_re <- list(
 ## MED PROJECTION
 lm_fit <- lm(bt_temp ~ Year, data = env.dat_me)
 lm_sum <- summary(lm_fit)
-proj_df <- data.frame(year_proj = 2022:2072)                    # we only need 2023–2028, but harmless to compute 2022 too
+proj_df <- data.frame(year_proj = 2022:2073)                    # we only need 2023–2028, but harmless to compute 2022 too
 error_sd <- lm_sum[["sigma"]] # residual SD
 set.seed(42)
 proj_df$SD <- rnorm(nrow(proj_df), 0, error_sd)
@@ -240,7 +240,7 @@ proj_df$Temp_proj <- lm_sum$coefficients[1,1] +
 
 # 7.3 Fill PROJECTED mean into 2023–2028 (rows 52:57 if year starts at 1972)
 ecov_om_P <- ecov_om
-ecov_om_P$mean[51:101, 1] <- proj_df$Temp_proj[proj_df$year_proj >= 2022]  # 51->2022, 52->2023, ..., 57->2028
+ecov_om_P$mean[51:102, 1] <- proj_df$Temp_proj[proj_df$year_proj >= 2022]  # 51->2022, 52->2023, ..., 57->2028
 
 plot(x = ecov_om_P$year, y = ecov_om_P$mean)
 
@@ -332,7 +332,7 @@ long_term_bt_mean <- 7.341484
 om_input_P$par$Ecov_re[1:51, 1] <- Ecov_re[1:51, 1]             # from fitted OM/your saved RDS
 
 ## For PROJECTED scenario: future “random effect” = obs - process mean
-om_input_P$par$Ecov_re[52:101, 1] <- om_input_P$data$Ecov_obs[52:101, 1] - long_term_bt_mean
+om_input_P$par$Ecov_re[52:102, 1] <- om_input_P$data$Ecov_obs[52:102, 1] - long_term_bt_mean
 
 ## Tell WHAM to not simulate Ecov_re (use what we set)
 om_input_P$data$do_simulate_Ecov_re <- 0L
@@ -351,7 +351,7 @@ unfitted_om_P <- fit_wham(om_input_P, do.fit = FALSE, do.brps = FALSE, MakeADFun
 ## Quick visual of Ecov obs vs latent x for this unfitted object
 plot(unfitted_om_P$input$data$Ecov_obs, type = "l", col = "red",
      main = "PROJECTED scenario: Ecov obs vs latent",
-     ylab = "Ecov", xlab = "row (1972..2028)")
+     ylab = "Ecov", xlab = "row (1972..2073)")
 lines(unfitted_om_P$rep$Ecov_x, type = "l", col = "blue")       # note: presence depends on model building; keep as per your script
 
 ## ============================================================
@@ -368,7 +368,7 @@ om_with_data_P <- update_om_fn(unfitted_om_P, seed = 123 + 1L, random = random_P
 ## Visual check again with simulated obs
 plot(om_with_data_P$input$data$Ecov_obs, type = "l", col = "red",
      main = "Simulated OM: Ecov obs vs latent",
-     ylab = "Ecov", xlab = "Year (1972..2072)")
+     ylab = "Ecov", xlab = "Year (1972..2073)")
 lines(om_with_data_P$rep$Ecov_x, type = "l", col = "blue")
 
 ```
@@ -385,7 +385,7 @@ lines(om_with_data_P$rep$Ecov_x, type = "l", col = "blue")
 #ecov_om_P$mean
 
 ## Years & sizes
-years_all   <- 1972:2072
+years_all   <- 1972:2073
 n_hist      <- length(base.years)          # 50
 lag         <- 1L
 n_proj      <- MSE_years                   # 6
@@ -414,7 +414,7 @@ RecTrend <- data.frame(year = ecov_me$year,
                        Temp = NA)
 k <- 51
 
-for(i in 0:51){
+for(i in 0:52){
   if (i %% 3 == 0){
     HistAvg[(i+1):(i+3)] <- mean(ecov_om_P$mean[(1:k)])
     RecWind[(i+1):(i+3)] <- mean(ecov_om_P$mean[((k-4):k)])
@@ -427,27 +427,27 @@ for(i in 0:51){
 }
 
 ecov_HistAvg <- ecov_me
-ecov_HistAvg$mean[51:101,] <- HistAvg[1:51]
+ecov_HistAvg$mean[51:102,] <- HistAvg[1:52]
 # ecov_HistAvg$mean[51:81,] <- 0
 
 ecov_RecWind <- ecov_me
-ecov_RecWind$mean[51:101,] <- RecWind[1:51]
+ecov_RecWind$mean[51:102,] <- RecWind[1:52]
 
 ecov_RecTrend <- ecov_me
-ecov_RecTrend$mean[51:101,] <- RecTrend$Temp[1:51]
+ecov_RecTrend$mean[51:102,] <- RecTrend$Temp[1:52]
 # ecov_RecTrend$mean[51:81,] <- 10000000
 
 ecov_TermYear <- ecov_me
-ecov_TermYear$mean[51:101,] <- om_with_data_P$rep$Ecov_x[51]#ecov_om_P$mean[50,]
+ecov_TermYear$mean[51:102,] <- om_with_data_P$rep$Ecov_x[51]#ecov_om_P$mean[50,]
 
 
 ecov_BadProj <- ecov_me
-ecov_BadProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_BadProj$mean[51:102,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
   (-lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021)) +
   proj_df$SD
 
 ecov_GoodProj <- ecov_me
-ecov_GoodProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_GoodProj$mean[51:102,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
   lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021) +
   proj_df$SD
 
@@ -477,26 +477,26 @@ scenarios <- list(
 EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
   #geom_line(aes(color = "OM")) +
   
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["AR1"]][["year"]][51:101]),
-                 y = c(rep(NA, 50),scenarios[["AR1"]][["mean"]][51:101]), color = 'AR1')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["AR1"]][["year"]][51:102]),
+                 y = c(rep(NA, 50),scenarios[["AR1"]][["mean"]][51:102]), color = 'AR1')) +
 
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["HistAvg"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["HistAvg"]][["mean"]][51:101]), color = 'HistAvg')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["HistAvg"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["HistAvg"]][["mean"]][51:102]), color = 'HistAvg')) +
 
-  geom_line( aes(x =c(rep(NA, 50),  scenarios[["RecWind"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["RecWind"]][["mean"]][51:101]), color = 'RecWind')) +
+  geom_line( aes(x =c(rep(NA, 50),  scenarios[["RecWind"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["RecWind"]][["mean"]][51:102]), color = 'RecWind')) +
 
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["RecTrend"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["RecTrend"]][["mean"]][51:101]), color = 'RecTrend')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["RecTrend"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["RecTrend"]][["mean"]][51:102]), color = 'RecTrend')) +
 
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["TermYear"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["TermYear"]][["mean"]][51:101]), color = 'TermYear')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["TermYear"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["TermYear"]][["mean"]][51:102]), color = 'TermYear')) +
 
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["GoodProj"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["GoodProj"]][["mean"]][51:101]), color = 'GoodProj')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["GoodProj"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["GoodProj"]][["mean"]][51:102]), color = 'GoodProj')) +
 
-  geom_line( aes(x = c(rep(NA, 50), scenarios[["BadProj"]][["year"]][51:101]),
-                 y = c(rep(NA, 50), scenarios[["BadProj"]][["mean"]][51:101]), color = 'BadProj')) +
+  geom_line( aes(x = c(rep(NA, 50), scenarios[["BadProj"]][["year"]][51:102]),
+                 y = c(rep(NA, 50), scenarios[["BadProj"]][["mean"]][51:102]), color = 'BadProj')) +
 
   geom_line(aes(x = c(1972, om_with_data_P[["years"]]), 
                 y = om_with_data_P$rep$Ecov_x, color = "OM")) + # om_with_data_P$rep$Ecov_x # om_with_data_P$input$data$Ecov_obs
@@ -526,14 +526,14 @@ ggsave(paste0(PlotLocations,'/EMtempPlot.png'), plot = EMtempPlot)
 
 # base years are 1973:2022 (50 yrs), 6-yr feedback, lag=1
 base.years <- 1973:2022
-n_feedback <- 50
+n_feedback <- 51
 bt_temp <- om_with_data_P$input$data$Ecov_obs  # should be length 57 (1972–2028)
 
 #scenarios <- create_ecov_scenarios(bt_temp, base.years, n_feedback, lag = 1)
 
 ecov_opts <- list(use_ecov_em = TRUE,
                       lag = 1,
-                      period = 51:101)
+                      period = 51:102)
 
 ## ============================================================
 ## 13) Run two EM loops against the same OM:
@@ -579,7 +579,7 @@ library(foreach)
 cluster <- makeCluster(10)
 registerDoParallel(cluster)
 
-foreach (i = c(1:10)) %dopar% {
+foreach (i = c(1:1)) %dopar% {
 # for(i in 1:10){
   tryCatch({
     

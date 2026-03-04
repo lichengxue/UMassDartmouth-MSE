@@ -28,10 +28,13 @@ library(wham)
 library(viridisLite)
 library(here)
 
+# PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
+
 PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
 
 # Uncomment this when you run, R just likes to rerun the setup chunk which kills me
-Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr.rds')
+# Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr.rds')
+Mods_proj <- readRDS('C:/Users/swulfing/Documents/MSE_results/NAARETest/MSEmods_50yr_Test3.rds')
 # Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
 # Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
 # Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
@@ -88,7 +91,7 @@ source('SpiderPlotFix.R')
 mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
 
 mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/NAARETest')
+main_dir <- paste0(PlotLocations, '/NAARETest/Test3')
 main.dir <- main_dir
 output_dir <- "SpiderPlot_fix"
 sub.dir <- output_dir
@@ -155,7 +158,7 @@ FIXEDplot_model_performance_radar3(mods_cleaned, is.nsim, main_dir, output_dir, 
 #mods_cleaned <- Mods_proj[!sapply(Mods_proj, is.null)]
 
 mods <- mods_cleaned
-main_dir <- paste0(PlotLocations, '/NAARETest')
+main_dir <- paste0(PlotLocations, '/NAARETest/Test3')
 main.dir <- main_dir
 output_dir <- "RadarPlot_fix"
 sub.dir <- output_dir
@@ -368,7 +371,7 @@ for(i in 1:length(mods)){ # i = seed, j = model
 # }
 
 
-saveRDS(Proj_ests,'C:/Users/swulfing/Documents/MSE_results/Combo/Projections_data.rds')
+saveRDS(Proj_ests,'C:/Users/swulfing/Documents/MSE_results/NAARETest/Projections_dataTest3.rds')
 rm('mods')
 
 ```
