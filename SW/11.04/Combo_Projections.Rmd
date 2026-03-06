@@ -1081,7 +1081,7 @@ plot_mse_output(mods,
                 base.model = "Mod_AR1Ecov",
                 start.years = 51,
                 use.n.years.first = 1,
-                use.n.years.last = 3)
+                use.n.years.last = 10)
 
 ```
 
