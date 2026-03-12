@@ -26,7 +26,7 @@ mods <- lapply(nsim, function(r) {
     mod_list <- lapply(model_nums, function(m) {
       simLocations <- paste0('Outputs/block', m)
       newr <- r + ((m -1) * 100)
-      file_path <- file.path(sprintf(paste0('/work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/Projections/',simLocations,"/block_%d_sim_%d_output.rds"), m, newr))
+      file_path <- file.path(sprintf(paste0('/work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/NAA_RE/',simLocations,"/block_%d_sim_%d_output.rds"), m, newr))
       readRDS(file_path)
       #print(file_path)
     })

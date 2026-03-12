@@ -3,11 +3,11 @@
 #SBATCH -n 1
 #SBATCH --mem=200G 
 #SBATCH -t 07:00:00 
-#SBATCH --job-name=Proj_analysis
+#SBATCH --job-name=5YrSENS_analysis
 #SBATCH --output=outputs.out
 #SBATCH --error=errors.out
 
-cd /work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/Projections
+cd /work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/5Yr/SensitivityTest
 
 #output file directory 
 outdir="Outputs"
@@ -18,5 +18,5 @@ module load conda/latest
 conda activate CONDATEST 
 
 #run R script
-Rscript ProjectionsAnalysis_Cluster.R \
+Rscript 5YrSENSAnalysis_Cluster.R \
   --outdir $outdir

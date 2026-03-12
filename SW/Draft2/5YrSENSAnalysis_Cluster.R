@@ -15,8 +15,8 @@ library(ggtern)
 model_nums <- 1:8 # CHANGE HERE Number of Projections
 nsim <- c(0:99) # CHANGE HERE number of simulations/seed
 ModNames <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj") # CHANGE NAME HERE
-assess.years <- c(2022, 2025, 2028, 2031, 2034, 2037, 2040, 2043, 2046, 2049, 2052, 2055, 2058, 2061, 2064, 2067, 2070) #PUT THIS BACK WHEN YOU'RE PUTTING IN CLUSTER# CHANGE ASSESSMENT YEARS HERE
-MSE_Length <- 3 # CHANGE HERE FOR 5 YR TESTS
+assess.years <- c(2022, 2027, 2032, 2037, 2042, 2047, 2052, 2057, 2062, 2067) #PUT THIS BACK WHEN YOU'RE PUTTING IN CLUSTER# CHANGE ASSESSMENT YEARS HERE
+MSE_Length <- 5 # CHANGE HERE FOR 5 YR TESTS
 
 modelLocations <- 'Outputs'
 
@@ -26,7 +26,7 @@ mods <- lapply(nsim, function(r) {
     mod_list <- lapply(model_nums, function(m) {
       simLocations <- paste0('Outputs/block', m)
       newr <- r + ((m -1) * 100)
-      file_path <- file.path(sprintf(paste0('/work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/Projections/',simLocations,"/block_%d_sim_%d_output.rds"), m, newr))
+      file_path <- file.path(sprintf(paste0('/work/pi_gfay_umassd_edu/Wulfing/CEFI_Draft2/5Yr/SensitivityTest/',simLocations,"/block_%d_sim_%d_output.rds"), m, newr))
       readRDS(file_path)
       #print(file_path)
     })
