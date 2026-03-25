@@ -1,0 +1,8 @@
+from: Evaluating alternative estimators of fishery management reference points
+Melissa A. Haltuch
+
+The impact of environmental forcing, which typically has some level of autocorrelation, provides an explanation
+of why stock–recruitment models with autocorrelated error structure often fit time-series of stock and recruitment data better that
+those without autocorrelation (Brodziak et al., 2001; Ianelli, 2002).
+
+I THINK INFORMATION IS IN HERE

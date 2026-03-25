@@ -14,7 +14,7 @@ library(ggtern)
 
 model_nums <- 1:8 # CHANGE HERE Number of Projections
 nsim <- c(0:99) # CHANGE HERE number of simulations/seed
-ModNames <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj") # CHANGE NAME HERE
+ModNames <- ModNames <- c("Mod_AR1Ecov", "Mod_NoEcov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_BadProj", "Mod_GoodProj")
 assess.years <- c(2022, 2027, 2032, 2037, 2042, 2047, 2052, 2057, 2062, 2067) #PUT THIS BACK WHEN YOU'RE PUTTING IN CLUSTER# CHANGE ASSESSMENT YEARS HERE
 MSE_Length <- 5 # CHANGE HERE FOR 5 YR TESTS
 

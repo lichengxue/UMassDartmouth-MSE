@@ -90,10 +90,15 @@ cohorts <- data.frame(
 cohorts <- cohorts %>%
   rowwise() %>%
   mutate(Cohort = (Year + 1) - Age) %>%
-  filter(Year >= 2023)
+  filter(Year >= 2000 & Year < 2005)
+
+bartest <- cohorts %>%
+  filter(Year == Cohort)
 
 cohorts$Cohort <- as.factor(cohorts$Cohort)
 
 
 ggplot(cohorts, aes(fill = Cohort, x = Year, y = WAA_SSB)) +
-  geom_bar(position = 'stack', stat = 'identity')
+  geom_bar(position = 'stack', stat = 'identity') +
+  scale_y_continuous(labels = scales::comma) + 
+  ylab('Weights at Age (kmt)') 

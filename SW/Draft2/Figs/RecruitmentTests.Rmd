@@ -1,0 +1,183 @@
+---
+title: "RecruitmentTest"
+author: "Sophie Wulfing"
+date: "2026-03-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# Where you left off:
+# Then, starting on line 610 from UpdateMSEcode_CHENGEX find params he pulls out and label what they are. Then go through MSE-end2end, adn MSE_30yr_EMFix for stuff to pull out
+# Then go back through manuscript and written list of to dos to make plots
+
+
+wd <- "C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs"
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, warning = FALSE, cache.lazy = FALSE)
+knitr::opts_knit$set(root.dir = wd) 
+setwd(wd)
+
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(ggpubr)
+library(secr)
+library(wham)
+library(viridisLite)
+library(here)
+
+# PlotLocations <- 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Plots'
+
+# Uncomment this when you run, R just likes to rerun the setup chunk which kills me
+# Mods_bias1 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_1/MSEmods_50yr.rds')
+# Mods_bias2 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_2/MSEmods_50yr.rds')
+# Mods_bias3 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_3/MSEmods_50yr.rds')
+# Mods_bias4 <- readRDS('C:/Users/swulfing/Documents/MSE_results/Biases/OM_4/MSEmods_50yr.rds')
+
+# mods_bias <- list(Mods_bias1, Mods_bias2, Mods_bias3, Mods_bias4)
+
+ModNames <- c("Mod_AR1Ecov", "Mod_HistAvgEcov", "Mod_RecWindEcov", "Mod_RecTrendEcov", "Mod_TermYear", "Mod_NoEcov", "Mod_GoodProj", "Mod_BadProj")
+# ModNames_bias <-  c("Mod_AR1Ecov", "Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov", "Mod_NoEcov")
+# ModNames_biasOMs <- c("Mod_LOWEcov", "Mod_MEDLOWEcov", "Mod_MEDEcov", "Mod_HIGHEcov")
+assess.years <- c(2022, 2025, 2028, 2031, 2034, 2037, 2040, 2043, 2046, 2049, 2052, 2055, 2058, 2061, 2064, 2067, 2070)
+MSE_Length <- 3
+
+seeds <- 100
+
+Proj_ests <- readRDS('C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs/Projections_data.rds')
+
+temps <- c(Proj_ests$Temp_OM[-1], NA)
+Proj_ests$Temp_OM <- temps
+
+proj_test <- Proj_ests %>%
+  select(Year, EM_name, seed_no, SSB, OM_NAA_youngest, Temp_OM) %>%
+  rowwise() %>%
+  mutate(SPR = OM_NAA_youngest/SSB) %>%
+  filter(Year > 2022)
+
+
+
+Bias_ests <- list(readRDS('C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs/BiasTests/Low_data.rds'),
+                  readRDS('C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs/BiasTests/MedLow_data.rds'),
+                  readRDS('C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs/BiasTests/Med_data.rds'),
+                  readRDS('C:/Users/swulfing/Documents/GitHub/UMassDartmouth-MSE/SW/Draft2/Figs/BiasTests/High_data.rds')
+                  )
+
+bias_test <- list()
+
+for(i in 1:length(Bias_ests)){
+  
+  temps <- c(Bias_ests[[i]]$Temp_OM[-1], NA) 
+  Bias_ests[[i]]$Temp_OM <- temps
+  
+  df <- data.frame(Bias_ests[[i]])
+  
+  bias_test[[i]] <- df %>%
+    select(Year, EM_name, seed_no, SSB, OM_NAA_youngest, Temp_OM) %>%
+    rowwise() %>%
+    mutate(SPR = OM_NAA_youngest/SSB) %>%
+    filter(Year > 2022)
+}
+
+
+```
+
+
+```{r tempVSrecProj}
+#proj <- merge(proj_test, temp, by = 'Year')
+
+ggplot(proj_test, aes(x = Temp_OM, y = SPR, color = EM_name)) +
+  geom_point()
+
+
+proj_timeseries <- proj_test %>%
+  group_by(EM_name, Year) %>%
+  summarize(SSB = mean(SSB),
+            Recruitment = mean(OM_NAA_youngest),
+            SPR = mean(SPR),
+            sd_SPR = sd(SPR, na.rm = TRUE),
+            Temp = mean(Temp_OM, na.rm = TRUE),
+            sd_Temp = sd(Temp_OM, na.rm = TRUE))
+
+
+# proj_timeseries <- merge(proj_timeseries, temp, by = 'Year')
+
+
+ggplot(proj_timeseries, aes(x = Year, y = SPR, color = EM_name)) +
+  geom_line() +
+  geom_line(aes(x = Year, y = (Temp-5), color = 'black'))
+
+```
+
+```{r tempVSrecBias}
+#proj <- merge(proj_test, temp, by = 'Year')
+
+p1 <- list()
+
+for(i in 1:length(bias_test)){
+  
+  plotstuff <- data.frame(bias_test[[i]])
+  
+  p1[[i]] <- ggplot(plotstuff, aes(x = Temp_OM, y = SPR, color = EM_name)) +
+    geom_point() +
+    labs(title=i)
+
+}
+
+ggarrange(p1[[1]], p1[[2]], p1[[3]], p1[[4]], 
+          ncol = 2, nrow = 2,
+          common.legend = TRUE, 
+          legend = "bottom")
+
+
+p2 <- list()
+
+for(i in 1:length(bias_test)){
+
+  
+  bleep <- data.frame(bias_test[[i]])
+  
+  bias_timeseries <- bleep %>%
+    group_by(EM_name, Year) %>%
+    #group_by(Year) %>%
+    summarize(SSB = mean(SSB),
+            Recruitment = mean(OM_NAA_youngest),
+            SPR = mean(SPR),
+            sd_SPR = sd(SPR, na.rm = TRUE),
+            Temp = mean(Temp_OM, na.rm = TRUE),
+            sd_Temp = sd(Temp_OM, na.rm = TRUE))
+  
+  
+  
+  p2[[i]] <- ggplot(bias_timeseries, aes(x = Year, y = SPR, color = EM_name)) +
+    geom_line() +
+    geom_line(aes(x = Year, y = Temp, color = 'black')) +
+    labs(title=i)
+
+}
+# proj_timeseries <- merge(proj_timeseries, temp, by = 'Year')
+
+
+ggarrange(p2[[1]], p2[[2]], p2[[3]], p2[[4]], 
+          ncol = 2, nrow = 2,
+          common.legend = TRUE, 
+          legend = "bottom")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
