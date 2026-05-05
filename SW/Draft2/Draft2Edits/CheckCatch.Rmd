@@ -1,0 +1,152 @@
+---
+title: "HCatchTest"
+author: "Sophie Wulfing"
+date: "2026-05-05"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+mods <- readRDS('C:/Users/swulfing/Documents/MSE_results/RecRETest/MSEmods_50yr.rds')
+#View(mods)
+
+library(ggplot2)
+
+cek <- data.frame(Years =  mods[[1]][["Mod1"]][["om"]][["years_full"]],
+                  Catch = mods[[1]][["Mod1"]][["om"]][["rep"]][["pred_catch"]],
+                  Recruit = mods[[1]][["Mod1"]][["om"]][["rep"]][["NAA"]][,,,1])
+
+dataset_catch <-  mods[[1]][["Mod1"]][["om"]][["rep"]][["pred_catch"]]
+dataset_recruit <- mods[[1]][["Mod1"]][["om"]][["rep"]][["NAA"]][,,,1]
+dataset_fbar <-  mods[[1]][["Mod1"]][["om"]][["rep"]][["Fbar"]][,1]
+
+
+for(i in 1:10){
+  if(i != 1){
+    dataset_catch <- dataset_catch + mods[[i]][["Mod1"]][["om"]][["rep"]][["pred_catch"]]
+    dataset_recruit <- dataset_recruit + mods[[i]][["Mod1"]][["om"]][["rep"]][["NAA"]][,,,1]
+    dataset_fbar <- dataset_fbar + mods[[i]][["Mod1"]][["om"]][["rep"]][["Fbar"]][,1]
+    
+    listlist_catch <- cbind(listlist_catch, mods[[i]][["Mod1"]][["om"]][["rep"]][["pred_catch"]])
+    colnames(listlist_catch)[i] <- i
+    
+    listlist_recruit <- cbind(listlist_recruit,mods[[i]][["Mod1"]][["om"]][["rep"]][["NAA"]][,,,1])
+    colnames(listlist_recruit)[i] <- i
+    
+    listlist_fbar <- cbind(listlist_fbar, mods[[i]][["Mod1"]][["om"]][["rep"]][["Fbar"]][,1])
+    colnames(listlist_fbar)[i] <- i
+    
+    listlist_SSB <- cbind(listlist_SSB, mods[[i]][["Mod1"]][["om"]][["rep"]][["SSB"]])
+    
+  }else{
+    listlist_catch <- data.frame(mods[[i]][["Mod1"]][["om"]][["rep"]][["pred_catch"]])
+    colnames(listlist_catch) <- i
+    
+    listlist_recruit <- data.frame(mods[[i]][["Mod1"]][["om"]][["rep"]][["NAA"]][,,,1])
+    colnames(listlist_recruit) <- i
+    
+    listlist_fbar <- data.frame(mods[[i]][["Mod1"]][["om"]][["rep"]][["Fbar"]][,1])
+    colnames(listlist_fbar)[i] <- i
+    
+    listlist_SSB <- data.frame(mods[[i]][["Mod1"]][["om"]][["rep"]][["SSB"]])
+    colnames(listlist_SSB)[i] <- i
+    }
+  
+
+}
+
+dataset_recruit <- dataset_recruit/10
+dataset_catch <- dataset_catch /10
+dataset_fbar <- dataset_fbar /10
+
+cek <- data.frame(Years =  mods[[1]][["Mod1"]][["om"]][["years_full"]],
+                  Catch_mean = dataset_catch,
+                  Catch_med = apply(listlist_catch, 1, median, na.rm = TRUE),
+                  Recruit_mean = dataset_recruit,
+                  Recruit_med = apply(listlist_recruit, 1, median, na.rm = TRUE),
+                  Fbar_mean = dataset_fbar,
+                  Fbar_med = apply(listlist_fbar, 1, median, na.rm = TRUE),
+                  SSB_med = apply(listlist_SSB, 1, median, na.rm = TRUE))
+```
+
+```{r plots}
+# ggplot(cek, aes(x = Years, y = Catch_mean)) +
+#   geom_line() +
+#   geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
+#   labs(title = 'Mean Catch')
+# 
+# 
+# ggplot(cek, aes(x = Years, y = Recruit_mean)) +
+#   geom_line() +
+#   geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed')+
+#   labs(title = 'Mean Recruit')
+# 
+# ggplot(cek, aes(x = Years, y = Fbar_mean)) +
+#   geom_line() +
+#   geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
+#   labs(title = 'Mean Fbar')
+
+ggplot(cek, aes(x = Years, y = Catch_med)) +
+  geom_line() +
+  geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
+  labs(title = 'Med Catch')
+
+
+ggplot(cek, aes(x = Years, y = Recruit_med)) +
+  geom_line() +
+  geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed')+
+  labs(title = 'Med Recruit')
+
+ggplot(cek, aes(x = Years, y = Fbar_med)) +
+  geom_line() +
+  geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
+  labs(title = 'Med Fbar')
+```
+
+```{r compare}
+
+
+rescale_catch <- max(cek$Catch_med)/max(cek$Fbar_med)
+cek$Catch_rescale <- cek$Catch_med/rescale_catch
+
+rescale_SSB <- max(cek$SSB_med)/max(cek$Fbar_med)
+cek$SSB_rescale <- cek$SSB_med/rescale_SSB
+
+ggplot() +
+  geom_line(cek, mapping = aes(x = Years, y = Fbar_med), color = 'black') +
+  geom_line(cek, mapping = aes(x = Years, y = Catch_rescale), color = 'blue') +
+  geom_line(cek, mapping = aes(x = Years, y = SSB_rescale), color = 'red') +
+  geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
+  #xlim(2010,2025) +
+  labs(title = 'Fbar (black) compared to rescaled Predicted Catch (blue) and rescaled SSB (red)') 
+  
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
