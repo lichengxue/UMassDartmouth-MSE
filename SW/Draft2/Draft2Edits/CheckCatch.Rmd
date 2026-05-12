@@ -40,6 +40,10 @@ for(i in 1:10){
     colnames(listlist_fbar)[i] <- i
     
     listlist_SSB <- cbind(listlist_SSB, mods[[i]][["Mod1"]][["om"]][["rep"]][["SSB"]])
+    colnames(listlist_SSB)[i] <- i
+    
+    list_ecovBeta <- cbind(list_ecovBeta, mods[[i]][["Mod1"]][["om"]][["par"]][["Ecov_beta_R"]])
+    col
     
   }else{
     listlist_catch <- data.frame(mods[[i]][["Mod1"]][["om"]][["rep"]][["pred_catch"]])
@@ -72,7 +76,7 @@ cek <- data.frame(Years =  mods[[1]][["Mod1"]][["om"]][["years_full"]],
                   SSB_med = apply(listlist_SSB, 1, median, na.rm = TRUE))
 ```
 
-```{r plots}
+```{r plots, eval = FALSE}
 # ggplot(cek, aes(x = Years, y = Catch_mean)) +
 #   geom_line() +
 #   geom_vline(xintercept = 2024, color = 'red', linetype = 'dashed') +
@@ -106,7 +110,7 @@ ggplot(cek, aes(x = Years, y = Fbar_med)) +
   labs(title = 'Med Fbar')
 ```
 
-```{r compare}
+```{r compare, eval = FALSE}
 
 
 rescale_catch <- max(cek$Catch_med)/max(cek$Fbar_med)
@@ -126,13 +130,97 @@ ggplot() +
 
 ```
 
+```{r fbarcek}
 
 
 
+listlist_fbar$Years <- cek$Years
+
+colnames(listlist_fbar) <- c('S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','Years')
+
+ggplot() +
+  geom_line(listlist_fbar, mapping = aes(y = S1, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S2, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S3, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S4, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S5, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S6, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S7, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S8, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S9, x = Years)) +
+  geom_line(listlist_fbar, mapping = aes(y = S10, x = Years)) +
+  labs(title = 'FBAR across sims')
+
+```
+
+```{r recruitecek}
 
 
 
+listlist_recruit$Years <- cek$Years
 
+colnames(listlist_recruit) <- c('S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','Years')
+
+ggplot() +
+  geom_line(listlist_recruit, mapping = aes(y = S1, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S2, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S3, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S4, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S5, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S6, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S7, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S8, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S9, x = Years)) +
+  geom_line(listlist_recruit, mapping = aes(y = S10, x = Years)) +
+  labs(title = 'recruitment across sims')
+
+```
+
+```{r sssbcek, eval = FALSE}
+
+# SHOW GAVIN THIS ONE
+
+listlist_SSB$Years <- cek$Years
+
+colnames(listlist_SSB) <- c('S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','Years')
+
+ggplot() +
+  geom_line(listlist_SSB, mapping = aes(y = S1, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S2, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S3, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S4, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S5, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S6, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S7, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S8, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S9, x = Years)) +
+  geom_line(listlist_SSB, mapping = aes(y = S10, x = Years)) +
+  labs(title = 'SSB across sims')
+
+```
+
+```{r sims, eval = FALSE}
+
+
+
+listlist_catch$Years <- cek$Years
+
+colnames(listlist_catch) <- c('S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','Years')
+
+ggplot() +
+  geom_line(listlist_catch, mapping = aes(y = S1, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S2, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S3, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S4, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S5, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S6, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S7, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S8, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S9, x = Years)) +
+  geom_line(listlist_catch, mapping = aes(y = S10, x = Years)) +
+  labs(title = 'catch across sims')
+
+```
 
 
 
