@@ -28,7 +28,7 @@ library(dplyr)
 library(ggplot2)
 
 ## Input files (assumes they exist in the wd)
-gb_dat   <- read_asap3_dat("GBK.DAT")                           # historical ASAP3 data (Georges Bank cod example)
+gb_dat   <- read_asap3_dat("GBK.DAT")                           # historical ASAP3 data 
 om_ecov  <- readRDS("om_ecov.rds")                              # fitted WHAM OM with Ecov (your base OM)
 env.dat_me <- read.csv("CI_indices.csv") %>% filter(Year > 1971)# environmental series with Year & bt_temp
 input_hist <- prepare_wham_input(gb_dat)                        # WHAM input for historical-only data (for copying sigmas etc.)
@@ -441,13 +441,16 @@ ecov_TermYear <- ecov_me
 ecov_TermYear$mean[51:102,] <- om_with_data_P$rep$Ecov_x[51]#ecov_om_P$mean[50,]
 
 
+set.seed(100)
+proj_df$SD <- rnorm(nrow(proj_df), 0, error_sd)
+
 ecov_BadProj <- ecov_me
-ecov_BadProj$mean[51:102,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_BadProj$mean[51:102,] <- om_with_data_P$rep$Ecov_x[51]+ 
   (-lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021)) +
   proj_df$SD
 
 ecov_GoodProj <- ecov_me
-ecov_GoodProj$mean[51:102,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_GoodProj$mean[51:102,] <- om_with_data_P$rep$Ecov_x[51] + 
   lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021) +
   proj_df$SD
 
@@ -501,6 +504,8 @@ EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
   geom_line(aes(x = c(1972, om_with_data_P[["years"]]), 
                 y = om_with_data_P$rep$Ecov_x, color = "OM")) + # om_with_data_P$rep$Ecov_x # om_with_data_P$input$data$Ecov_obs
   geom_vline(xintercept=2022, linetype="dashed", color = "black") +
+  # geom_vline(xintercept=2025, linetype="dashed", color = "black") +
+  # geom_vline(xintercept=2028, linetype="dashed", color = "black") +
   scale_color_manual(name='Model',
                      breaks=c('OM', 'AR1', 'RecWind', 'HistAvg', 'RecTrend', 'TermYear', 'GoodProj', 'BadProj'),
                      values=c('OM'="#000000", 
@@ -512,12 +517,14 @@ EMtempPlot <- ggplot(data.frame(ecov_om), aes(x = year, y = mean)) +
                               'GoodProj' = 'purple',
                               'BadProj' = 'orange'),
                      labels = c('OM','AR(1)','Recent Window','Historical Average','Recent Trend','Terminal Year','Good Projection', 'Bad Projection')) +
-  # xlim(2018,2072) +
+   xlim(2018,2072) +
   ylab("Bottom Temperature (°C)") +
+  # xlim(2017,2026) +
   xlab("Year")
 
 print(EMtempPlot)
 ggsave(paste0(PlotLocations,'/EMtempPlot.png'), plot = EMtempPlot)
+saveRDS(scenarios, 'C:/Users/swulfing/Documents/GitHub/UMassD/YT_proj/Manuscripts/Draft3/Plots/Combo/tempScenarios.rds' )
 ########################################################################################################
 
 ```
