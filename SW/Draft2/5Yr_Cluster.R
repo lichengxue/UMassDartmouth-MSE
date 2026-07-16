@@ -209,7 +209,7 @@ sigma_vals[,,2:6]  <- 0.720
 # # SENSITIVITY TEST
 # sigma_vals <- array(0.2, dim = c(n_stocks, n_regions, n_ages))
 # sigma_vals[,,1]    <- 0.2
-# sigma_vals[,,2:6]  <- 0.720
+# sigma_vals[,,2:6]  <- 0.2
 
 
 NAA_re <- list(
@@ -440,13 +440,16 @@ ecov_TermYear <- ecov_me
 ecov_TermYear$mean[51:101,] <- om_with_data_P$rep$Ecov_x[51]#ecov_om_P$mean[50,]
 
 
+set.seed(100)
+proj_df$SD <- rnorm(nrow(proj_df), 0, error_sd)
+
 ecov_BadProj <- ecov_me
-ecov_BadProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_BadProj$mean[51:101,] <- om_with_data_P$rep$Ecov_x[51]+ 
   (-lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021)) +
   proj_df$SD
 
 ecov_GoodProj <- ecov_me
-ecov_GoodProj$mean[51:101,] <- env.dat_me[50,2] + #lm_sum$coefficients[1,1] +
+ecov_GoodProj$mean[51:101,] <- om_with_data_P$rep$Ecov_x[51] + 
   lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021) +
   proj_df$SD
 
@@ -1030,36 +1033,4 @@ mod <- switch(block,
                 #}
               }
               # stopCluster(cluster)
-)              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+)

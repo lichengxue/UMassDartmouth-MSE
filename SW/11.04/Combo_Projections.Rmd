@@ -454,6 +454,9 @@ ecov_GoodProj$mean[51:102,] <- om_with_data_P$rep$Ecov_x[51] +
   lm_sum$coefficients[2,1]*(proj_df$year_proj - 2021) +
   proj_df$SD
 
+ecov_OM <- ecov_me
+ecov_OM$mean <- om_with_data_P$rep$Ecov_x
+
     # Return scenarios
 scenarios <- list(
       AR1 = ecov_AR1,
@@ -463,7 +466,8 @@ scenarios <- list(
       RecTrend = ecov_RecTrend,
       TermYear = ecov_TermYear,
       BadProj = ecov_BadProj,
-      GoodProj = ecov_GoodProj
+      GoodProj = ecov_GoodProj,
+      OM = ecov_OM
     )
 
 ####################### PLOTTING ###############################################
